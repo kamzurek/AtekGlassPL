@@ -7,14 +7,14 @@ export default function Gallery() {
 
     // wszystkie obrazy
     const allImages = [
-        { src: 'src/assets/aneks.jpg', alt: 'Szkło 1' },
-        { src: 'src/assets/galeria1.jpg', alt: 'Szkło 2' },
-        { src: 'src/assets/balustrada.jpg', alt: 'Szkło 3' },
-        { src: 'src/assets/lustro.jpg', alt: 'Szkło 4' },
-        { src: 'src/assets/grafika2.jpg', alt: 'Szkło 5' },
-        { src: 'src/assets/kabina1.jpg', alt: 'Szkło 6' },
-        { src: 'src/assets/wizytowka.jpg', alt: 'Szkło 7' },
-        { src: 'src/assets/hartowane.jpg', alt: 'Szkło 8' },
+        { src: '/aneks.jpg', alt: 'Szkło 1' },
+        { src: '/galeria1.jpg', alt: 'Szkło 2' },
+        { src: '/balustrada.jpg', alt: 'Szkło 3' },
+        { src: '/lustro.jpg', alt: 'Szkło 4' },
+        { src: '/grafika2.jpg', alt: 'Szkło 5' },
+        { src: '/kabina1.jpg', alt: 'Szkło 6' },
+        { src: '/wizytowka.jpg', alt: 'Szkło 7' },
+        { src: '/hartowane.jpg', alt: 'Szkło 8' },
         // kolejne obrazy... np. '/assets/inne.jpg'
     ];
 
