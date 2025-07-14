@@ -21,6 +21,19 @@
   --mobile-section-padding: 4rem 1rem;
 }
 
+/* ZMIANA: Zmienione body.dark-mode na .dark-mode */
+.dark-mode {
+  --main-color: #99ccee;
+  --accent-color: #66aadd;
+  --text-color: #eee;
+  --bg-color: #121619;
+  --card-bg: #1e2228;
+  --hover-color: #3388ff;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.9);
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
