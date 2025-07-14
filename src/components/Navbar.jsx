@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import '/src/App.css'
+import '/src/App.css';
+import logo from '/public/logopng.png';// Zaimportuj logo
 
 export default function Navbar({ activeSection, darkMode, toggleDarkMode }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,9 +18,41 @@ export default function Navbar({ activeSection, darkMode, toggleDarkMode }) {
         }
     };
 
+    // Funkcja do przewijania na górę strony
+    const scrollToTop = (e) => {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    };
+
     return (
         <nav className="navbar">
-            <h2 className="logo">ATEK-GLASS</h2>
+            {/* Zastąpienie tekstu logo obrazkiem */}
+            <a
+                href="#"
+                onClick={scrollToTop}
+                className="logo-link"
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    textDecoration: 'none'
+                }}
+            >
+                <img
+                    src={logo}
+                    alt="ATEK-GLASS Logo"
+                    className="logo-img"
+                    style={{
+                        height: '50px', // Dostosuj wysokość według potrzeb
+                        width: 'auto',
+                        transition: 'transform 0.3s ease'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                />
+            </a>
 
             <div className={`nav-links ${isOpen ? 'open' : ''}`}>
                 <a
