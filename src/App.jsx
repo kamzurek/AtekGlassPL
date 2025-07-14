@@ -11,9 +11,16 @@ import './App.css';
 
 function App() {
     const [activeSection, setActiveSection] = useState('');
-    const [darkMode, setDarkMode] = useState(false);  // <-- stan trybu
+    const [darkMode, setDarkMode] = useState(false);
 
     useEffect(() => {
+        // Dodaj klasę dark-mode do body zamiast do .App
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+
         const handleScroll = () => {
             const sections = ['#about', '#offer', '#gallery', '#contact'];
             const scrollPosition = window.scrollY + 100;
@@ -34,17 +41,19 @@ function App() {
         window.addEventListener('scroll', handleScroll);
         handleScroll();
 
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            // Usuń klasę przy czyszczeniu
+            document.body.classList.remove('dark-mode');
+        };
+    }, [darkMode]);
 
-    // Dodaj handler przełączający tryb
     const toggleDarkMode = () => {
         setDarkMode(prev => !prev);
     };
 
     return (
-        // dodaj klasę dark-mode do głównego diva w zależności od stanu
-        <div className={`App${darkMode ? ' dark-mode' : ''}`}>
+        <div className="App">
             <Navbar activeSection={activeSection} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
             <Hero />
             <About />

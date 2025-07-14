@@ -96,7 +96,7 @@
   transition: box-shadow 0.3s ease;
 }
 
-.dark-mode .hero {
+body.dark-mode .hero {
   background: linear-gradient(
           rgba(17, 22, 30, 0.85),
           rgba(17, 22, 30, 0.85)
@@ -111,9 +111,10 @@
   font-weight: 700;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   transition: color 0.3s ease, text-shadow 0.3s ease;
+  color: #eee; /* Stały kolor dla lepszej czytelności */
 }
 
-.dark-mode .hero h1 {
+body.dark-mode .hero h1 {
   color: #eee;
   text-shadow: 0 2px 15px rgba(0, 0, 0, 0.9);
 }
@@ -124,6 +125,7 @@ section {
   max-width: 1200px;
   margin: 0 auto;
   transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: var(--bg-color); /* Dodane */
 }
 
 section h2 {
@@ -137,7 +139,7 @@ section h2 {
   transition: color 0.3s ease;
 }
 
-.dark-mode section h2 {
+body.dark-mode section h2 {
   color: var(--accent-color);
 }
 
@@ -150,6 +152,7 @@ section h2 {
   padding: 2rem;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   text-align: justify;
+  color: var(--text-color); /* Dodane */
 }
 
 /* ===== KARTY ===== */
@@ -168,9 +171,10 @@ section h2 {
   transition: var(--transition);
   text-align: center;
   cursor: pointer;
+  color: var(--text-color); /* Dodane */
 }
 
-.dark-mode .card {
+body.dark-mode .card {
   box-shadow: var(--shadow-md);
 }
 
@@ -182,6 +186,7 @@ section h2 {
 .card-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
+  color: var(--accent-color); /* Dodane */
 }
 
 /* ===== GALERIA ===== */
@@ -334,6 +339,7 @@ section h2 {
 .contact-text p {
   margin: 0.3rem 0 0;
   line-height: 1.4;
+  color: var(--text-color); /* Dodane */
 }
 
 .map-container {
@@ -359,7 +365,7 @@ section h2 {
   transition: background-color 0.3s ease;
 }
 
-.dark-mode .footer {
+body.dark-mode .footer {
   background: var(--accent-color);
 }
 
@@ -410,6 +416,7 @@ a.button:hover {
   box-shadow: var(--shadow-lg);
   position: relative;
   text-align: left;
+  color: var(--text-color); /* Dodane */
 }
 
 .modal-close {

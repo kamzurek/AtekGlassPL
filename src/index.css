@@ -26,7 +26,8 @@
   --mobile-section-padding: 4rem 1rem;
 }
 
-.dark-mode {
+/* Przeniesione z .dark-mode do body.dark-mode */
+body.dark-mode {
   --main-color: #99ccee;
   --accent-color: #66aadd;
   --text-color: #eee;
@@ -82,7 +83,7 @@ button {
 }
 
 button:hover {
-  background-color: #005fa3;
+  background-color: var(--hover-color);
 }
 
 html {
