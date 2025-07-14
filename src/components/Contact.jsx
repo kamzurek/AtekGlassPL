@@ -1,4 +1,5 @@
 import React from 'react';
+import '/src/App.css'
 import { FaFacebook, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from 'react-icons/fa';
 
 export default function Contact() {

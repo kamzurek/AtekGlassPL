@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '/src/App.css'
 
 export default function Navbar({ activeSection, darkMode, toggleDarkMode }) {
     const [isOpen, setIsOpen] = useState(false);

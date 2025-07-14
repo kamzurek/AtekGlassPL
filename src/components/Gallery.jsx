@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AOS from 'aos';
+import '/src/App.css'
 import 'aos/dist/aos.css';
 
 export default function Gallery() {

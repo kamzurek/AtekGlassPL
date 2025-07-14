@@ -7,21 +7,25 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  /* Kolory i motywy */
   --main-color: #004466;
   --accent-color: #0077cc;
   --text-color: #222;
   --bg-color: #f0f2f5;
   --card-bg: #ffffff;
   --hover-color: #66ccff;
+
+  /* Cienie i przejścia */
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  /* Rozmieszczenie */
   --section-padding: 6rem 2rem;
   --mobile-section-padding: 4rem 1rem;
 }
 
-/* ZMIANA: Zmienione body.dark-mode na .dark-mode */
 .dark-mode {
   --main-color: #99ccee;
   --accent-color: #66aadd;
@@ -46,6 +50,7 @@ body {
   color: var(--text-color);
   min-width: 320px;
   font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {
@@ -53,6 +58,7 @@ a {
   text-decoration: none;
   transition: color 0.2s;
 }
+
 a:hover {
   color: var(--hover-color);
 }
