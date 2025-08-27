@@ -1,544 +1,317 @@
 /* ===== ELEMENTY OGÓLNE ===== */
 .navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background-color: var(--card-bg);
-  box-shadow: var(--shadow-sm);
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: var(--card-bg);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .navbar .logo {
-  color: var(--main-color);
-  font-weight: 700;
-  font-size: 1.5rem;
+    color: var(--main-color);
+    font-weight: 700;
+    font-size: 1.5rem;
 }
 
 .nav-links {
-  display: flex;
-  gap: 2rem;
+    display: flex;
+    gap: 2rem;
 }
 
 .nav-links a {
-  color: var(--text-color);
-  font-weight: 500;
-  position: relative;
-  text-decoration: none;
-  transition: color 0.3s ease;
+    color: var(--text-color);
+    font-weight: 500;
+    position: relative;
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 .nav-links a.active::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--accent-color);
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--accent-color);
 }
 
 .menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 24px;
-  width: 30px;
-  padding: 0;
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 24px;
+    width: 30px;
+    padding: 0;
 }
 
 .menu-toggle span {
-  display: block;
-  height: 3px;
-  width: 100%;
-  background-color: var(--text-color);
-  border-radius: 10px;
-  transition: var(--transition);
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: var(--text-color);
+    border-radius: 10px;
+    transition: var(--transition);
 }
 
-.menu-toggle.open span:nth-child(1) {
-  transform: translateY(10px) rotate(45deg);
-}
-
-.menu-toggle.open span:nth-child(2) {
-  opacity: 0;
-}
-
-.menu-toggle.open span:nth-child(3) {
-  transform: translateY(-10px) rotate(-45deg);
-}
+.menu-toggle.open span:nth-child(1) { transform: translateY(10px) rotate(45deg); }
+.menu-toggle.open span:nth-child(2) { opacity: 0; }
+.menu-toggle.open span:nth-child(3) { transform: translateY(-10px) rotate(-45deg); }
 
 /* ===== SEKCJA HERO ===== */
 .hero {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-align: center;
-  padding: 0 1rem;
-  background: linear-gradient(
-          rgba(17, 22, 30, 0.85),
-          rgba(17, 22, 30, 0.85)
-  ),
-  url("/heropic.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: var(--shadow-lg);
-  transition: box-shadow 0.3s ease;
-}
-
-body.dark-mode .hero {
-  background: linear-gradient(
-          rgba(17, 22, 30, 0.85),
-          rgba(17, 22, 30, 0.85)
-  ),
-  url("/heropic.jpg");
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 0 1rem;
+    background:
+            linear-gradient(rgba(17, 22, 30, 0.8), rgba(17, 22, 30, 0.7)),
+            url("/heropic4.png") center/cover no-repeat;
+    box-shadow: var(--shadow-lg);
+    transition: box-shadow 0.3s ease;
 }
 
 .hero h1 {
-  font-size: 3rem;
-  max-width: 800px;
-  text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7);
-  font-weight: 700;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
-  color: #eee; /* Stały kolor dla lepszej czytelności */
+    font-size: 3rem;
+    max-width: 800px;
+    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7);
+    font-weight: 700;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    color: #eee;
 }
 
 body.dark-mode .hero h1 {
-  color: #eee;
-  text-shadow: 0 2px 15px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.9);
 }
 
 /* ===== SEKCJE TREŚCI ===== */
 section {
-  padding: var(--section-padding);
-  max-width: 1200px;
-  margin: 0 auto;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  background-color: var(--bg-color); /* Dodane */
+    padding: var(--section-padding);
+    max-width: 1200px;
+    margin: 0 auto;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: var(--bg-color);
 }
 
 section h2 {
-  text-align: center;
-  margin-bottom: 3rem;
-  font-size: 2.5rem;
-  color: var(--main-color);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  transition: color 0.3s ease;
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    color: var(--main-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    transition: color 0.3s ease;
 }
 
-body.dark-mode section h2 {
-  color: var(--accent-color);
-}
+body.dark-mode section h2 { color: var(--accent-color); }
 
 .about {
-  font-size: 1.2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: var(--shadow-sm);
-  padding: 2rem;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  text-align: justify;
-  color: var(--text-color); /* Dodane */
+    font-size: 1.2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    padding: 2rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    text-align: justify;
+    color: var(--text-color);
 }
 
 /* ===== KARTY ===== */
 .card-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
 }
 
 .card {
-  background: var(--card-bg);
-  border-radius: 10px;
-  padding: 2rem;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  text-align: center;
-  cursor: pointer;
-  color: var(--text-color); /* Dodane */
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    text-align: center;
+    cursor: pointer;
+    color: var(--text-color);
 }
 
-body.dark-mode .card {
-  box-shadow: var(--shadow-md);
-}
+body.dark-mode .card { box-shadow: var(--shadow-md); }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-md);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
 }
 
 .card-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  color: var(--accent-color); /* Dodane */
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
 }
 
 /* ===== GALERIA ===== */
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
 }
 
 .gallery-item {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
-  height: 250px;
-  cursor: pointer;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 250px;
+    cursor: pointer;
 }
 
 .gallery-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: var(--transition);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
 }
 
-.gallery-item:hover img {
-  transform: scale(1.05);
-}
+.gallery-item:hover img { transform: scale(1.05); }
 
 .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: white;
-  opacity: 0;
-  transition: var(--transition);
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    opacity: 0;
+    transition: var(--transition);
+    pointer-events: none;                 /* nie blokuje kliknięcia */
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0,0,0,.35);
+    font-size: clamp(1.75rem, 8vw, 3rem); /* czytelne na mobile */
 }
 
-.gallery-item:hover .overlay {
-  opacity: 1;
-}
+.gallery-item:hover .overlay,
+.overlay--visible { opacity: 1; }
 
-.gallery-item img.blurred {
-  filter: blur(4px);
-}
+.gallery-item img.blurred { filter: blur(4px); }
 
 /* ===== LIGHTBOX ===== */
 .lightbox {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
 }
 
 .lightbox img {
-  max-width: 90%;
-  max-height: 90%;
+    max-width: 90%;
+    max-height: 90%;
 }
 
 .nav {
-  position: absolute;
-  top: 50%;
-  background: none;
-  border: none;
-  font-size: 3rem;
-  color: white;
-  cursor: pointer;
-  transform: translateY(-50%);
+    position: absolute;
+    top: 50%;
+    background: none;
+    border: none;
+    font-size: 3rem;
+    color: white;
+    cursor: pointer;
+    transform: translateY(-50%);
 }
 
-.nav.left {
-  left: 20px;
-}
-
-.nav.right {
-  right: 20px;
-}
+.nav.left  { left: 20px; }
+.nav.right { right: 20px; }
 
 .close-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 2rem;
-  background: none;
-  color: white;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
+    background: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
 }
 
 /* ===== KONTAKT ===== */
 .contact-section {
-  padding: var(--section-padding);
-  background: var(--bg-color);
+    padding: var(--section-padding);
+    background: var(--bg-color);
 }
 
 .contact-info {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
 }
 
 .contact-item {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
 }
 
 .icon-circle {
-  background: var(--accent-color);
-  color: white;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 1.5rem;
-}
-
-.fb-circle {
-  color: var(--accent-color);
-  align-content: center;
-}
-
-.contact-text h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: var(--main-color);
-}
-
-.contact-text p {
-  margin: 0.3rem 0 0;
-  line-height: 1.4;
-  color: var(--text-color); /* Dodane */
-}
-
-.map-container {
-  height: 400px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-}
-
-.map-container iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-/* ===== STOPKA ===== */
-.footer {
-  background: var(--main-color);
-  color: white;
-  text-align: center;
-  padding: 2rem;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-}
-
-body.dark-mode .footer {
-  background: var(--accent-color);
-}
-
-/* ===== PRZYCISKI ===== */
-button,
-a.button {
-  background-color: var(--accent-color);
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-  font-size: 1rem;
-  font-weight: 600;
-  transition: var(--transition);
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
-}
-
-button:hover,
-a.button:hover {
-  background-color: var(--hover-color);
-  box-shadow: var(--shadow-md);
-}
-
-/* ===== MODALE ===== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-}
-
-.modal-content {
-  background: var(--card-bg);
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: var(--shadow-lg);
-  position: relative;
-  text-align: left;
-  color: var(--text-color); /* Dodane */
-}
-
-.modal-close {
-  position: absolute;
-  top: 0.5rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--text-color);
-}
-
-/* ===== PRZYCISK PRZEWIJANIA ===== */
-.scroll-to-top {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 1000;
-}
-
-.scroll-to-top button {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-md);
-  padding: 0;
-  background: var(--accent-color);
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.scroll-to-top button:hover {
-  background-color: var(--hover-color);
-  box-shadow: var(--shadow-lg);
-}
-
-/* ===== HERO CONTENT ===== */
-.hero-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-}
-
-.hero-buttons {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-/* ===== MEDIA QUERIES ===== */
-@media (max-width: 768px) {
-  .menu-toggle {
-    display: flex;
-  }
-
-  .nav-links {
-    position: fixed;
-    top: 70px;
-    left: 0;
-    right: 0;
-    background: var(--card-bg);
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 0;
-    gap: 1.5rem;
-    box-shadow: var(--shadow-md);
-    transform: translateY(-150%);
-    transition: transform 0.4s ease;
-  }
-
-  .nav-links.open {
-    transform: translateY(0);
-  }
-
-  .hero h1 {
-    font-size: 2rem;
-  }
-
-  section {
-    padding: var(--mobile-section-padding);
-  }
-}
-
-/* Facebook bubble – cała kropka to link */
-.fb-circle {
-    /* NIE ustawiaj tu koloru na accent, zostaw tło z .icon-circle */
-}
-
-.fb-circle {
-    /* opcjonalnie efekt hover */
-    transition: background-color 0.2s ease, transform 0.15s ease;
-}
-.fb-circle:hover,
-.fb-circle:focus {
-    background: var(--hover-color);
-    transform: translateY(-1px);
-}
-
-/* spraw, by <a> wypełnił kółko i był czytelny */
-.fb-circle {
-    text-decoration: none;
-}
-.fb-circle { /* to jest <a>, więc stylujemy je jak kółko */
-    display: flex;
+    background: var(--accent-color);
+    color: #fff;
     width: 50px;
     height: 50px;
     border-radius: 50%;
+    display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;           /* IKONA biała = widoczna na niebieskim tle */
-    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 1.5rem;
 }
 
-/* link w tekście obok */
+.contact-text h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--main-color);
+}
+
+.contact-text p {
+    margin: 0.3rem 0 0;
+    line-height: 1.4;
+    color: var(--text-color);
+}
+
+.map-container {
+    height: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ===== LINKI TEKSTOWE ===== */
 .text-link {
     color: var(--text-color);
     text-decoration: none;
@@ -548,3 +321,196 @@ a.button:hover {
     color: var(--accent-color);
     text-decoration: underline;
 }
+
+/* ===== STOPKA ===== */
+.footer {
+    background: var(--main-color);
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+body.dark-mode .footer { background: var(--accent-color); }
+
+/* ===== PRZYCISKI ===== */
+button,
+a.button {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    font-size: 1rem;
+    font-weight: 600;
+    transition: var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+button:hover,
+a.button:hover {
+    background-color: var(--hover-color);
+    box-shadow: var(--shadow-md);
+}
+
+/* ===== MODALE ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    text-align: left;
+    color: var(--text-color);
+}
+
+.modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+/* ===== PRZYCISK PRZEWIJANIA ===== */
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+
+.scroll-to-top button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    padding: 0;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.scroll-to-top button:hover {
+    background-color: var(--hover-color);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ===== HERO CONTENT ===== */
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* ===== FACEBOOK bubble (ikonka jako klikalne kółko) ===== */
+/* Używaj <a class="icon-circle fb-circle">...</a> */
+.icon-circle.fb-circle {
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+.icon-circle.fb-circle:hover,
+.icon-circle.fb-circle:focus {
+    background: var(--hover-color);
+    transform: translateY(-1px);
+}
+.icon-circle.fb-circle svg { color: inherit; } /* na wszelki wypadek */
+
+/* ===== MEDIA QUERIES ===== */
+@media (max-width: 768px) {
+    .menu-toggle { display: flex; }
+
+    .nav-links {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: var(--card-bg);
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 0;
+        gap: 1.5rem;
+        box-shadow: var(--shadow-md);
+        transform: translateY(-150%);
+        transition: transform 0.4s ease;
+    }
+
+    .nav-links.open { transform: translateY(0); }
+    .hero h1 { font-size: 2rem; }
+    section { padding: var(--mobile-section-padding); }
+}
+
+/* === Dark mode: przytłumione kółka ikon w sekcji Kontakt === */
+body.dark-mode .icon-circle {
+    /* ciemniejsza wersja accentu, żeby nie „świeciła” */
+    background: color-mix(in srgb, var(--accent-color) 70%, #000 30%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); /* delikatny kontrast */
+}
+
+/* hover w dark mode też mniej jaskrawy */
+body.dark-mode .icon-circle.fb-circle:hover,
+body.dark-mode .icon-circle.fb-circle:focus {
+    background: color-mix(in srgb, var(--hover-color) 70%, #000 30%);
+}
+
+/* === DARK MODE: przytłum wszystkie przyciski i bąbelki === */
+body.dark-mode button,
+body.dark-mode a.button,
+body.dark-mode .scroll-to-top button,
+body.dark-mode .icon-circle {
+    /* Fallback dla przeglądarek bez color-mix: stały, ciemniejszy odcień */
+    background: #2a6bb8;
+    /* Docelowo: mieszanka accent z czernią, mniej „świeci” */
+    background: color-mix(in srgb, var(--accent-color) 70%, #000 30%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    color: #fff;
+}
+
+body.dark-mode button:hover,
+body.dark-mode a.button:hover,
+body.dark-mode .scroll-to-top button:hover,
+body.dark-mode .icon-circle:hover,
+body.dark-mode .icon-circle:focus {
+    /* Fallback */
+    background: #255fa3;
+    /* Docelowo */
+    background: color-mix(in srgb, var(--hover-color) 70%, #000 30%);
+    box-shadow: var(--shadow-md);
+}
+
+/* Utrzymaj białą ikonę wewnątrz bąbelka, gdyby coś nadpisywało */
+body.dark-mode .icon-circle svg { color: inherit; }
