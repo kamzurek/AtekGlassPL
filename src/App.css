@@ -514,3 +514,33 @@ body.dark-mode .icon-circle:focus {
 
 /* Utrzymaj białą ikonę wewnątrz bąbelka, gdyby coś nadpisywało */
 body.dark-mode .icon-circle svg { color: inherit; }
+
+/* === Oferta: siatka z fade w stanie zwiniętym + przycisk === */
+.offer-grid {
+    position: relative;
+}
+
+.offer-grid--collapsed {
+    /* nic nie obcinamy wysokością – pokazujemy 9 przez .slice() w kodzie,
+       a tutaj tylko kosmetyczny fade na dole siatki */
+}
+
+.offer-grid--collapsed::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 72px;
+    pointer-events: none;
+    /* delikatne wygaszenie do koloru tła sekcji */
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, var(--bg-color) 90%);
+}
+
+.offer-toggle-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.offer-toggle {
+    min-width: 180px;
+}

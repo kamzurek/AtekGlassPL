@@ -1,7 +1,8 @@
+// offer.jsx
 import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import '/src/App.css'
+import '/src/App.css';
 
 export default function Offer() {
     const offers = [
@@ -20,12 +21,21 @@ export default function Offer() {
         { title: 'Ogrody zimowe', icon: '🔍', description: 'Całoroczne konstrukcje ze szkła, łączące wnętrze z ogrodem, zapewniające izolację termiczną.' },
     ];
 
+    const INITIAL_VISIBLE = 9;
+    const [showAll, setShowAll] = useState(false);
     const [selected, setSelected] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
         AOS.init({ duration: 800, once: true });
     }, []);
+
+    // po rozwinięciu odśwież animacje nowo dodanych kafelków
+    useEffect(() => {
+        // AOS v2:
+        if (typeof AOS.refreshHard === 'function') AOS.refreshHard();
+        else if (typeof AOS.refresh === 'function') AOS.refresh();
+    }, [showAll]);
 
     const openModal = (offer) => {
         setSelected(offer);
@@ -37,17 +47,27 @@ export default function Offer() {
         setSelected(null);
     };
 
+    const visibleOffers = showAll ? offers : offers.slice(0, INITIAL_VISIBLE);
+    const remaining = Math.max(offers.length - INITIAL_VISIBLE, 0);
+
     return (
         <section id="offer">
             <h2>Oferta</h2>
-            <div className="card-list">
-                {offers.map((offer, idx) => (
+
+            <div
+                className={`card-list offer-grid ${showAll ? '' : 'offer-grid--collapsed'}`}
+                aria-expanded={showAll}
+            >
+                {visibleOffers.map((offer, idx) => (
                     <div
-                        key={idx}
+                        key={`${offer.title}-${idx}`}
                         className="card"
                         data-aos="fade-up"
-                        data-aos-delay={idx * 100}
+                        data-aos-delay={(idx % 9) * 80}
                         onClick={() => openModal(offer)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openModal(offer)}
                     >
                         <div className="card-icon">{offer.icon}</div>
                         <h3>{offer.title}</h3>
@@ -55,10 +75,24 @@ export default function Offer() {
                 ))}
             </div>
 
+            {offers.length > INITIAL_VISIBLE && (
+                <div className="offer-toggle-wrap">
+                    <button
+                        type="button"
+                        className="button offer-toggle"
+                        onClick={() => setShowAll((s) => !s)}
+                        aria-expanded={showAll}
+                        aria-controls="offer"
+                    >
+                        {showAll ? 'Zwiń' : `Rozwiń ${remaining ? `(+${remaining})` : ''}`}
+                    </button>
+                </div>
+            )}
+
             {modalOpen && selected && (
                 <div className="modal-overlay" onClick={closeModal}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <button className="modal-close" onClick={closeModal}>×</button>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="modal-close" onClick={closeModal} aria-label="Zamknij modal">×</button>
                         <h3>{selected.title}</h3>
                         <p>{selected.description}</p>
                     </div>
