@@ -583,25 +583,3 @@ body.dark-mode .icon-circle svg { color: inherit; }
 @media (max-width: 768px) {
     .lightbox .nav { font-size: 2.5rem; } /* wcześniej 3rem */
 }
-
-/* === SWIPE/ANIMACJE dla lightboxa === */
-.lightbox { touch-action: pan-y; } /* pion przewijany, poziom dla nas */
-.lightbox-image-wrap {
-    /* już masz max-width/height w poprzednim CSS */
-    will-change: transform, opacity;
-    cursor: grab;
-}
-.lightbox-image-wrap.is-dragging { cursor: grabbing; }
-.lightbox-image-wrap.is-animating { transition: transform 240ms ease; }
-
-/* Upewnij się, że na mobile gest nie jest ucinany (safe area) */
-@supports (padding: max(0px)) {
-    .lightbox {
-        padding-left: max(0px, env(safe-area-inset-left));
-        padding-right: max(0px, env(safe-area-inset-right));
-    }
-}
-
-/* swipe i bezpieczne strefy */
-.lightbox { touch-action: pan-y; }
-.lightbox-image-wrap { will-change: transform; }
