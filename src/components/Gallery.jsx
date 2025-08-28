@@ -19,7 +19,7 @@ export default function Gallery() {
         { src: '/hartowane.jpg',   alt: 'Szkło 8' },
         // nowa paczka: galery (1) .. galery (27)
         ...Array.from({ length: 27 }, (_, i) => ({
-            src: `/galery (${i + 1}).JPG`,
+            src: `/galery (${i + 1}).JPG`, // upewnij się, że wielkość liter zgadza się z plikami na serwerze
             alt: `Szkło ${i + 9}`,
         })),
     ];
@@ -55,6 +55,17 @@ export default function Gallery() {
         return () => window.removeEventListener('keydown', onKey);
     }, [selectedIndex, total]);
 
+    // Reset stanów po zamknięciu lightboxa
+    useEffect(() => {
+        if (selectedIndex === null) {
+            setDragX(0);
+            setAnimating(false);
+            setDragging(false);
+            slideDirRef.current = null;
+            phaseRef.current = 'idle';
+        }
+    }, [selectedIndex]);
+
     const openFrom = (idx) => setSelectedIndex(idx);
 
     const handleItemClick = (item, idx) => {
@@ -62,25 +73,25 @@ export default function Gallery() {
         else openFrom(idx);
     };
 
-    // Proste funkcje zmiany slajdu (bez eventów), używane też przez „swipe”
+    // Zmiana slajdów
     const goPrev = () => setSelectedIndex((i) => (i - 1 + total) % total);
     const goNext = () => setSelectedIndex((i) => (i + 1) % total);
 
-    // Klik na strzałkach (zatrzymujemy propagację, by nie zamykać lightboxa)
     const prevImage = (e) => { e.stopPropagation(); goPrev(); };
     const nextImage = (e) => { e.stopPropagation(); goNext(); };
 
-    // --- SWIPE: logika przeciągania palcem/myszą (Pointer Events) ---
+    // --- SWIPE (Pointer Events) ---
     const startXRef = useRef(0);
-    const [dragX, setDragX] = useState(0);         // aktualne przesunięcie (px)
+    const slideDirRef = useRef(null);     // 'left' | 'right' | null
+    const phaseRef = useRef('idle');      // 'idle' | 'out' | 'in'
+
+    const [dragX, setDragX] = useState(0);
     const [dragging, setDragging] = useState(false);
     const [animating, setAnimating] = useState(false);
 
-    const thresholdPx = Math.min(Math.floor(window.innerWidth * 0.18), 120); // próg akceptacji gestu
-
     const onPointerDown = (e) => {
         e.stopPropagation();
-        e.preventDefault(); // blokuje natywne przeciąganie obrazka
+        e.preventDefault(); // blokuje natywne drag img
 
         const tgt = e.currentTarget;
         if (tgt && typeof tgt.setPointerCapture === 'function') {
@@ -97,6 +108,7 @@ export default function Gallery() {
         const delta = e.clientX - startXRef.current;
         setDragX(delta);
     };
+
     const onPointerUp = (e) => {
         if (!dragging) return;
         e.stopPropagation();
@@ -114,37 +126,58 @@ export default function Gallery() {
         const dx = dragX;
         setDragging(false);
 
+        // próg akceptacji gestu obliczamy dynamicznie
+        const thresholdPx = Math.min(Math.floor((window.innerWidth || 0) * 0.18), 120);
+
         // mały ruch → powrót na środek
         if (Math.abs(dx) < thresholdPx) {
             setAnimating(true);
             setDragX(0);
-            window.setTimeout(() => setAnimating(false), 240);
+            // zakończenie przechwyci onTransitionEnd
             return;
         }
 
-        // kierunek gestu
+        // kierunek gestu (lewo = następne)
         const dir = dx < 0 ? 'left' : 'right';
-        const outX = dir === 'left' ? -window.innerWidth : window.innerWidth;
+        slideDirRef.current = dir;
+        phaseRef.current = 'out';
 
         // 1) wyjazd obecnego slajdu w stronę gestu
         setAnimating(true);
+        const outX = dir === 'left' ? -window.innerWidth : window.innerWidth;
         setDragX(outX);
+    };
 
-        window.setTimeout(() => {
+    const onTransitionEnd = (e) => {
+        // interesuje nas tylko zakończenie transform
+        if (e.propertyName !== 'transform') return;
+
+        if (phaseRef.current === 'out' && slideDirRef.current) {
             // 2) zmiana slajdu
+            const dir = slideDirRef.current;
             if (dir === 'left') goNext(); else goPrev();
 
-            // 3) teleport nowego poza ekran po PRZECIWNEJ stronie (bez animacji)
+            // 3) TELEPORT nowego poza ekran po PRZECIWNEJ stronie (bez animacji)
             setAnimating(false);
             setDragX(dir === 'left' ? window.innerWidth : -window.innerWidth);
 
-            // 4) następny frame: włącz animację i jedź do środka
+            // 4) kolejny frame: włącz animację i wjazd do środka
             requestAnimationFrame(() => {
-                setAnimating(true);
-                setDragX(0);
-                window.setTimeout(() => setAnimating(false), 240);
+                requestAnimationFrame(() => { // podwójny rAF – stabilniej na mobile
+                    phaseRef.current = 'in';
+                    setAnimating(true);
+                    setDragX(0);
+                });
             });
-        }, 180);
+            return;
+        }
+
+        if (phaseRef.current === 'in' || animating) {
+            // 5) zakończ wjazd lub powrót
+            phaseRef.current = 'idle';
+            setAnimating(false);
+            slideDirRef.current = null;
+        }
     };
 
     return (
@@ -195,8 +228,11 @@ export default function Gallery() {
                         onPointerMove={onPointerMove}
                         onPointerUp={onPointerUp}
                         onPointerCancel={onPointerUp}
+                        onPointerLeave={dragging ? onPointerUp : undefined}
+                        onTransitionEnd={onTransitionEnd}
                         style={{
                             transform: `translateX(${dragX}px)`,
+                            // delikatny fade podczas przeciągania
                             opacity: dragging ? Math.max(0.75, 1 - Math.min(Math.abs(dragX) / 900, 0.25)) : 1,
                         }}
                     >

@@ -592,7 +592,7 @@ body.dark-mode .icon-circle svg { color: inherit; }
     cursor: grab;
 }
 .lightbox-image-wrap.is-dragging { cursor: grabbing; }
-.lightbox-image-wrap.is-animating { transition: transform 240ms ease, opacity 240ms ease; }
+.lightbox-image-wrap.is-animating { transition: transform 240ms ease; }
 
 /* Upewnij się, że na mobile gest nie jest ucinany (safe area) */
 @supports (padding: max(0px)) {
