@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// gallery.jsx
+import React, { useState, useEffect, useRef } from 'react';
 import AOS from 'aos';
 import '/src/App.css';
 import 'aos/dist/aos.css';
@@ -6,7 +7,7 @@ import 'aos/dist/aos.css';
 export default function Gallery() {
     const [selectedIndex, setSelectedIndex] = useState(null);
 
-    // Wszystkie obrazy (dodawaj kolejne wpisy do tej tablicy)
+    // Wszystkie obrazy
     const allImages = [
         { src: '/aneks.jpg',       alt: 'Szkło 1' },
         { src: '/galeria1.jpg',    alt: 'Szkło 2' },
@@ -23,18 +24,16 @@ export default function Gallery() {
         })),
     ];
 
-
     const previewCount = 7; // ile pokazać „na liście”
     const total = allImages.length;
     const remainingCount = Math.max(total - previewCount, 0);
     const previewImages = allImages.slice(0, previewCount);
 
-    // kafelek „+N” dokładamy tylko, jeśli są jeszcze zdjęcia
-    const displayItems = remainingCount > 0
-        ? [...previewImages, { isMore: true, count: remainingCount }]
-        : [...previewImages];
+    const displayItems =
+        remainingCount > 0
+            ? [...previewImages, { isMore: true, count: remainingCount }]
+            : [...previewImages];
 
-    // miniatura dla kafelka „+N” – pierwsze ukryte zdjęcie (fallback: ostatnie z podglądu)
     const moreThumbSrc =
         total > previewCount
             ? allImages[previewCount].src
@@ -44,20 +43,104 @@ export default function Gallery() {
         AOS.init({ duration: 800, once: true });
     }, []);
 
+    // Nawigacja klawiaturą w lightboxie
+    useEffect(() => {
+        if (selectedIndex === null) return;
+        const onKey = (e) => {
+            if (e.key === 'Escape') setSelectedIndex(null);
+            if (e.key === 'ArrowLeft') setSelectedIndex((i) => (i - 1 + total) % total);
+            if (e.key === 'ArrowRight') setSelectedIndex((i) => (i + 1) % total);
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [selectedIndex, total]);
+
     const openFrom = (idx) => setSelectedIndex(idx);
 
     const handleItemClick = (item, idx) => {
-        if (item.isMore) openFrom(previewCount);  // otwórz od 1. ukrytego
+        if (item.isMore) openFrom(previewCount);
         else openFrom(idx);
     };
 
-    const prevImage = (e) => {
+    // Proste funkcje zmiany slajdu (bez eventów), używane też przez „swipe”
+    const goPrev = () => setSelectedIndex((i) => (i - 1 + total) % total);
+    const goNext = () => setSelectedIndex((i) => (i + 1) % total);
+
+    // Klik na strzałkach (zatrzymujemy propagację, by nie zamykać lightboxa)
+    const prevImage = (e) => { e.stopPropagation(); goPrev(); };
+    const nextImage = (e) => { e.stopPropagation(); goNext(); };
+
+    // --- SWIPE: logika przeciągania palcem/myszą (Pointer Events) ---
+    const startXRef = useRef(0);
+    const [dragX, setDragX] = useState(0);         // aktualne przesunięcie (px)
+    const [dragging, setDragging] = useState(false);
+    const [animating, setAnimating] = useState(false);
+
+    const thresholdPx = Math.min(Math.floor(window.innerWidth * 0.18), 120); // próg akceptacji gestu
+
+    const onPointerDown = (e) => {
         e.stopPropagation();
-        setSelectedIndex((i) => (i - 1 + total) % total);
+        // blokujemy domyślne „przeciąganie obrazka”
+        e.preventDefault();
+        try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+        startXRef.current = e.clientX;
+        setDragging(true);
+        setAnimating(false);
     };
-    const nextImage = (e) => {
+
+    const onPointerMove = (e) => {
+        if (!dragging) return;
+        const delta = e.clientX - startXRef.current;
+        setDragX(delta);
+    };
+
+    const animateTo = (x, cb, duration = 240) => {
+        setAnimating(true);
+        setDragX(x);
+        window.setTimeout(() => {
+            if (cb) cb();
+        }, duration);
+    };
+
+    const onPointerUp = (e) => {
+        if (!dragging) return;
         e.stopPropagation();
-        setSelectedIndex((i) => (i + 1) % total);
+        try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
+        const dx = dragX;
+        setDragging(false);
+
+        // próg akceptacji gestu
+        if (Math.abs(dx) < thresholdPx) {
+            setAnimating(true);
+            setDragX(0);
+            return window.setTimeout(() => setAnimating(false), 240);
+        }
+
+        // kierunek gestu: lewo = next, prawo = prev
+        const dir = dx < 0 ? 'left' : 'right';
+        const outX = dir === 'left' ? -window.innerWidth : window.innerWidth;
+
+        // 1) Wyjedź obecnym slajdem w stronę gestu
+        setAnimating(true);
+        setDragX(outX);
+
+        window.setTimeout(() => {
+            // 2) Zmień slajd
+            if (dir === 'left') goNext(); else goPrev();
+
+            // 3) TELEPORT nowego slajdu poza ekran po PRZECIWNEJ stronie BEZ animacji
+            // (dla swipe w LEWO wjeżdżamy z PRAWEJ -> +window.innerWidth)
+            setAnimating(false);
+            setDragX(dir === 'left' ? window.innerWidth : -window.innerWidth);
+
+            // 4) W następnym frame włącz animację i jedź do środka
+            requestAnimationFrame(() => {
+                setAnimating(true);
+                setDragX(0);
+                // po dojechaniu wyłącz czysto pomocniczo "is-animating"
+                window.setTimeout(() => setAnimating(false), 240);
+            });
+        }, 180); // czas wyjazdu starego slajdu (dopasuj do CSS)
     };
 
     return (
@@ -86,6 +169,7 @@ export default function Gallery() {
                                 src={src}
                                 alt={isMore ? `Pozostałe zdjęcia (${countText})` : item.alt}
                                 className={isMore ? 'blurred' : ''}
+                                draggable={false}
                             />
                             <div className={`overlay ${isMore ? 'overlay--visible' : ''}`}>
                                 {countText}
@@ -98,10 +182,30 @@ export default function Gallery() {
             {selectedIndex !== null && (
                 <div className="lightbox" onClick={() => setSelectedIndex(null)}>
                     <button className="nav left" onClick={prevImage} aria-label="Poprzednie zdjęcie">‹</button>
-                    <img
-                        src={allImages[selectedIndex].src}
-                        alt={allImages[selectedIndex].alt}
-                    />
+
+                    {/* wrap: trzyma obraz i licznik; przesuwamy cały wrap */}
+                    <div
+                        className={`lightbox-image-wrap ${animating ? 'is-animating' : ''} ${dragging ? 'is-dragging' : ''}`}
+                        onClick={(e) => e.stopPropagation()}
+                        onPointerDown={onPointerDown}
+                        onPointerMove={onPointerMove}
+                        onPointerUp={onPointerUp}
+                        onPointerCancel={onPointerUp}
+                        style={{
+                            transform: `translateX(${dragX}px)`,
+                            opacity: dragging ? Math.max(0.75, 1 - Math.min(Math.abs(dragX) / 900, 0.25)) : 1,
+                        }}
+                    >
+                        <img
+                            src={allImages[selectedIndex].src}
+                            alt={allImages[selectedIndex].alt}
+                            draggable={false}
+                        />
+                        <div className="lightbox-counter" aria-live="polite">
+                            {selectedIndex + 1}/{total}
+                        </div>
+                    </div>
+
                     <button className="nav right" onClick={nextImage} aria-label="Następne zdjęcie">›</button>
                     <button className="close-btn" onClick={() => setSelectedIndex(null)} aria-label="Zamknij">×</button>
                 </div>

@@ -73,7 +73,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #fff;
     text-align: center;
     padding: 0 1rem;
     background:
@@ -197,10 +197,10 @@ body.dark-mode .card { box-shadow: var(--shadow-md); }
     color: #fff;
     opacity: 0;
     transition: var(--transition);
-    pointer-events: none;                 /* nie blokuje kliknięcia */
+    pointer-events: none;
     font-weight: 700;
     text-shadow: 0 1px 2px rgba(0,0,0,.35);
-    font-size: clamp(1.75rem, 8vw, 3rem); /* czytelne na mobile */
+    font-size: clamp(1.75rem, 8vw, 3rem);
 }
 
 .gallery-item:hover .overlay,
@@ -219,9 +219,36 @@ body.dark-mode .card { box-shadow: var(--shadow-md); }
     z-index: 2000;
 }
 
-.lightbox img {
-    max-width: 90%;
-    max-height: 90%;
+.lightbox-image-wrap {
+    position: relative;
+    display: inline-block; /* wrapper dopasowuje się do obrazka */
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.lightbox img,
+.lightbox-image-wrap img {
+    display: block;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    object-fit: contain; /* całe zdjęcie bez rozciągania */
+}
+
+.lightbox-counter {
+    position: absolute;
+    top: 12px;
+    left: 12px; /* zmień na right:12px, jeśli wolisz prawy róg */
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    line-height: 1;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: saturate(120%) blur(2px);
+    pointer-events: none;
+    user-select: none;
 }
 
 .nav {
@@ -230,7 +257,7 @@ body.dark-mode .card { box-shadow: var(--shadow-md); }
     background: none;
     border: none;
     font-size: 3rem;
-    color: white;
+    color: #fff;
     cursor: pointer;
     transform: translateY(-50%);
 }
@@ -244,7 +271,7 @@ body.dark-mode .card { box-shadow: var(--shadow-md); }
     right: 20px;
     font-size: 2rem;
     background: none;
-    color: white;
+    color: #fff;
     width: 50px;
     height: 50px;
     display: flex;
@@ -325,20 +352,19 @@ body.dark-mode .card { box-shadow: var(--shadow-md); }
 /* ===== STOPKA ===== */
 .footer {
     background: var(--main-color);
-    color: white;
+    color: #fff;
     text-align: center;
     padding: 2rem;
     font-weight: 500;
     transition: background-color 0.3s ease;
 }
-
 body.dark-mode .footer { background: var(--accent-color); }
 
 /* ===== PRZYCISKI ===== */
 button,
 a.button {
     background-color: var(--accent-color);
-    color: white;
+    color: #fff;
     padding: 0.8rem 1.5rem;
     border: none;
     border-radius: 8px;
@@ -410,7 +436,7 @@ a.button:hover {
     box-shadow: var(--shadow-md);
     padding: 0;
     background: var(--accent-color);
-    color: white;
+    color: #fff;
     border: none;
     cursor: pointer;
     transition: var(--transition);
@@ -436,7 +462,7 @@ a.button:hover {
     justify-content: center;
 }
 
-/* ===== FACEBOOK bubble (ikonka jako klikalne kółko) ===== */
+/* ===== FACEBOOK bubble ===== */
 /* Używaj <a class="icon-circle fb-circle">...</a> */
 .icon-circle.fb-circle {
     text-decoration: none;
@@ -448,7 +474,54 @@ a.button:hover {
     background: var(--hover-color);
     transform: translateY(-1px);
 }
-.icon-circle.fb-circle svg { color: inherit; } /* na wszelki wypadek */
+.icon-circle.fb-circle svg { color: inherit; }
+
+/* === Oferta: siatka z fade w stanie zwiniętym + przycisk === */
+.offer-grid { position: relative; }
+.offer-grid--collapsed { /* sterowane logiką (slice) – tylko fade */ }
+.offer-grid--collapsed::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 72px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, var(--bg-color) 90%);
+}
+.offer-toggle-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+.offer-toggle { min-width: 180px; }
+
+/* === DARK MODE (ikonki, przyciski) === */
+body.dark-mode .icon-circle {
+    background: color-mix(in srgb, var(--accent-color) 70%, #000 30%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
+body.dark-mode .icon-circle.fb-circle:hover,
+body.dark-mode .icon-circle.fb-circle:focus {
+    background: color-mix(in srgb, var(--hover-color) 70%, #000 30%);
+}
+body.dark-mode button,
+body.dark-mode a.button,
+body.dark-mode .scroll-to-top button,
+body.dark-mode .icon-circle {
+    background: #2a6bb8; /* fallback */
+    background: color-mix(in srgb, var(--accent-color) 70%, #000 30%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    color: #fff;
+}
+body.dark-mode button:hover,
+body.dark-mode a.button:hover,
+body.dark-mode .scroll-to-top button:hover,
+body.dark-mode .icon-circle:hover,
+body.dark-mode .icon-circle:focus {
+    background: #255fa3; /* fallback */
+    background: color-mix(in srgb, var(--hover-color) 70%, #000 30%);
+    box-shadow: var(--shadow-md);
+}
+body.dark-mode .icon-circle svg { color: inherit; }
 
 /* ===== MEDIA QUERIES ===== */
 @media (max-width: 768px) {
@@ -470,77 +543,61 @@ a.button:hover {
     }
 
     .nav-links.open { transform: translateY(0); }
+
     .hero h1 { font-size: 2rem; }
     section { padding: var(--mobile-section-padding); }
+
+    /* Lightbox – ciaśniejsze limity na mobile */
+    .lightbox img,
+    .lightbox-image-wrap { max-width: 96vw; max-height: 82vh; }
+    .lightbox-image-wrap img { max-width: 96vw; max-height: 82vh; }
 }
 
-/* === Dark mode: przytłumione kółka ikon w sekcji Kontakt === */
-body.dark-mode .icon-circle {
-    /* ciemniejsza wersja accentu, żeby nie „świeciła” */
-    background: color-mix(in srgb, var(--accent-color) 70%, #000 30%);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); /* delikatny kontrast */
-}
+/* ==== FIX: strzałki lightbox na urządzeniach mobilnych (safe area + z-index) ==== */
 
-/* hover w dark mode też mniej jaskrawy */
-body.dark-mode .icon-circle.fb-circle:hover,
-body.dark-mode .icon-circle.fb-circle:focus {
-    background: color-mix(in srgb, var(--hover-color) 70%, #000 30%);
-}
+/* 1) Podnieś strzałki nad obraz: */
+.lightbox .nav { z-index: 2100; -webkit-tap-highlight-color: transparent; }
 
-/* === DARK MODE: przytłum wszystkie przyciski i bąbelki === */
-body.dark-mode button,
-body.dark-mode a.button,
-body.dark-mode .scroll-to-top button,
-body.dark-mode .icon-circle {
-    /* Fallback dla przeglądarek bez color-mix: stały, ciemniejszy odcień */
-    background: #2a6bb8;
-    /* Docelowo: mieszanka accent z czernią, mniej „świeci” */
-    background: color-mix(in srgb, var(--accent-color) 70%, #000 30%);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-    color: #fff;
-}
-
-body.dark-mode button:hover,
-body.dark-mode a.button:hover,
-body.dark-mode .scroll-to-top button:hover,
-body.dark-mode .icon-circle:hover,
-body.dark-mode .icon-circle:focus {
-    /* Fallback */
-    background: #255fa3;
-    /* Docelowo */
-    background: color-mix(in srgb, var(--hover-color) 70%, #000 30%);
-    box-shadow: var(--shadow-md);
-}
-
-/* Utrzymaj białą ikonę wewnątrz bąbelka, gdyby coś nadpisywało */
-body.dark-mode .icon-circle svg { color: inherit; }
-
-/* === Oferta: siatka z fade w stanie zwiniętym + przycisk === */
-.offer-grid {
-    position: relative;
-}
-
-.offer-grid--collapsed {
-    /* nic nie obcinamy wysokością – pokazujemy 9 przez .slice() w kodzie,
-       a tutaj tylko kosmetyczny fade na dole siatki */
-}
-
-.offer-grid--collapsed::after {
-    content: "";
-    position: absolute;
-    left: 0; right: 0; bottom: -1px;
-    height: 72px;
-    pointer-events: none;
-    /* delikatne wygaszenie do koloru tła sekcji */
-    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, var(--bg-color) 90%);
-}
-
-.offer-toggle-wrap {
+/* 2) Powiększ klikalny obszar strzałek (bez zmiany wyglądu): */
+.lightbox .nav {
+    width: 56px;
+    height: 56px;
     display: flex;
+    align-items: center;
     justify-content: center;
-    margin-top: 1rem;
+    line-height: 1;
 }
 
-.offer-toggle {
-    min-width: 180px;
+/* 3) Szanuj bezpieczne strefy (notch) – iOS/nowe przeglądarki: */
+@supports (padding: max(0px)) {
+    .lightbox {
+        box-sizing: border-box;
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    .lightbox .nav.left  { left: calc(env(safe-area-inset-left) + 12px); }
+    .lightbox .nav.right { right: calc(env(safe-area-inset-right) + 12px); }
+}
+
+/* 4) Drobny tuning na wąskich ekranach: zmniejsz rozmiar glifu, ale zostaw duży hitbox */
+@media (max-width: 768px) {
+    .lightbox .nav { font-size: 2.5rem; } /* wcześniej 3rem */
+}
+
+/* === SWIPE/ANIMACJE dla lightboxa === */
+.lightbox { touch-action: pan-y; } /* pion przewijany, poziom dla nas */
+.lightbox-image-wrap {
+    /* już masz max-width/height w poprzednim CSS */
+    will-change: transform, opacity;
+    cursor: grab;
+}
+.lightbox-image-wrap.is-dragging { cursor: grabbing; }
+.lightbox-image-wrap.is-animating { transition: transform 240ms ease, opacity 240ms ease; }
+
+/* Upewnij się, że na mobile gest nie jest ucinany (safe area) */
+@supports (padding: max(0px)) {
+    .lightbox {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
 }
