@@ -19,7 +19,7 @@ export default function Gallery() {
         { src: '/hartowane.jpg',   alt: 'Szkło 8' },
         // nowa paczka: galery (1) .. galery (27)
         ...Array.from({ length: 27 }, (_, i) => ({
-            src: `/galery (${i + 1}).JPG`,
+            src: `/galery (${i + 1}).JPG`, // upewnij się co do wielkości liter na serwerze
             alt: `Szkło ${i + 9}`,
         })),
     ];
@@ -43,7 +43,7 @@ export default function Gallery() {
         AOS.init({ duration: 800, once: true });
     }, []);
 
-    // Nawigacja klawiaturą w lightboxie
+    // Nawigacja klawiaturą (tylko gdy lightbox otwarty)
     useEffect(() => {
         if (selectedIndex === null) return;
         const onKey = (e) => {
@@ -61,27 +61,35 @@ export default function Gallery() {
     // Zmiana slajdów
     const goPrev = () => setSelectedIndex((i) => (i - 1 + total) % total);
     const goNext = () => setSelectedIndex((i) => (i + 1) % total);
+
     const prevImage = (e) => { e.stopPropagation(); goPrev(); };
     const nextImage = (e) => { e.stopPropagation(); goNext(); };
 
-    // --- SWIPE BEZ ANIMACJI: jeden gest = jeden slajd ---
-    const pointerIdRef = useRef(null);      // aktywny pointer
+    // --- SWIPE bez animacji: jeden gest = jeden slajd, z progiem zależnym od typu pointera ---
+    const pointerIdRef = useRef(null);
+    const pointerTypeRef = useRef('mouse');
     const startXRef = useRef(0);
     const startTRef = useRef(0);
-    const handledRef = useRef(false);       // czy już obsłużono ten gest
-    const lastNavAtRef = useRef(0);         // krótki debounce po nawigacji
+    const handledRef = useRef(false);
+    const lastNavAtRef = useRef(0);
 
-    const distanceThreshold = 40;           // px
-    const velocityThreshold = 0.45;         // ~450 px/s
-    const debounceMs = 220;                 // minimalny odstęp między slajdami
+    const getThresholds = () => {
+        const isTouch =
+            pointerTypeRef.current === 'touch' ||
+            (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
+        // Wyższa czułość na dotyku:
+        return {
+            distance: isTouch ? 20 : 40,     // px (było 40)
+            velocity: isTouch ? 0.25 : 0.45, // px/ms (było 0.45)
+            debounce: isTouch ? 140 : 220,   // ms (było 220)
+        };
+    };
 
     const onPointerDown = (e) => {
-        // nie reaguj, jeśli lightbox zamknięty
         if (selectedIndex === null) return;
 
         e.stopPropagation();
-        // Blokuj natywny drag obrazka i gesty przeglądarki
-        if (e.cancelable) e.preventDefault();
+        if (e.cancelable) e.preventDefault(); // blokuje natywny drag img/gesty przeglądarki
 
         const tgt = e.currentTarget;
         if (tgt && typeof tgt.setPointerCapture === 'function') {
@@ -89,47 +97,10 @@ export default function Gallery() {
         }
 
         pointerIdRef.current = e.pointerId;
+        pointerTypeRef.current = e.pointerType || 'mouse';
         startXRef.current = e.clientX;
         startTRef.current = performance.now();
         handledRef.current = false;
-    };
-
-    const onPointerUp = (e) => {
-        if (selectedIndex === null) return;
-        e.stopPropagation();
-
-        // tylko ten sam pointer
-        if (pointerIdRef.current !== e.pointerId) return;
-
-        const now = performance.now();
-        if (now - lastNavAtRef.current < debounceMs) {
-            // jeszcze „cooldown” po poprzednim slajdzie
-            cleanupCapture(e);
-            return;
-        }
-
-        // oblicz parametry gestu
-        const dx = e.clientX - startXRef.current;
-        const dt = Math.max(1, now - startTRef.current);
-        const velocity = Math.abs(dx / dt); // px/ms
-
-        // zwolnij capture
-        cleanupCapture(e);
-
-        if (handledRef.current) return; // ten gest już obsłużony (na wszelki wypadek)
-
-        const accept = Math.abs(dx) >= distanceThreshold || velocity >= velocityThreshold;
-        if (!accept) return; // zbyt mały/ wolny ruch — brak nawigacji
-
-        handledRef.current = true;
-        lastNavAtRef.current = now;
-
-        if (dx < 0) goNext(); else goPrev();
-    };
-
-    const onPointerCancel = (e) => {
-        // tylko sprzątamy; bez nawigacji
-        cleanupCapture(e);
     };
 
     const cleanupCapture = (e) => {
@@ -143,6 +114,39 @@ export default function Gallery() {
             tgt.releasePointerCapture(e.pointerId);
         }
         pointerIdRef.current = null;
+    };
+
+    const onPointerUp = (e) => {
+        if (selectedIndex === null) return;
+        e.stopPropagation();
+        if (pointerIdRef.current !== e.pointerId) return;
+
+        const now = performance.now();
+        const { distance, velocity, debounce } = getThresholds();
+
+        if (now - lastNavAtRef.current < debounce) {
+            cleanupCapture(e);
+            return;
+        }
+
+        const dx = e.clientX - startXRef.current;
+        const dt = Math.max(1, now - startTRef.current);
+        const v = Math.abs(dx / dt); // px/ms
+
+        cleanupCapture(e);
+        if (handledRef.current) return;
+
+        const accept = Math.abs(dx) >= distance || v >= velocity;
+        if (!accept) return;
+
+        handledRef.current = true;
+        lastNavAtRef.current = now;
+
+        if (dx < 0) goNext(); else goPrev();
+    };
+
+    const onPointerCancel = (e) => {
+        cleanupCapture(e);
     };
 
     return (
@@ -185,14 +189,13 @@ export default function Gallery() {
                 <div className="lightbox" onClick={() => setSelectedIndex(null)}>
                     <button className="nav left" onClick={prevImage} aria-label="Poprzednie zdjęcie">‹</button>
 
-                    {/* Bez animacji – tylko gest i licznik */}
+                    {/* Bez animacji – sam gest i licznik */}
                     <div
                         className="lightbox-image-wrap"
                         onClick={(e) => e.stopPropagation()}
                         onPointerDown={onPointerDown}
                         onPointerUp={onPointerUp}
                         onPointerCancel={onPointerCancel}
-                        // Uwaga: NIE podpinać onPointerLeave pod onPointerUp — to wywoływało fałszywe „swipe”
                     >
                         <img
                             src={allImages[selectedIndex].src}
