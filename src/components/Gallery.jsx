@@ -125,7 +125,7 @@ export default function Gallery() {
         setDragging(false);
 
         // Próg i flick velocity (bardziej wyrozumiałe na telefonach)
-        const distanceThreshold = Math.max(48, Math.min(Math.floor((window.innerWidth || 320) * 0.12), 96)); // 12% szer./min 48px
+        const distanceThreshold = 40;
         const velocityThreshold = 0.45; // ~450 px/s
 
         const accept =
