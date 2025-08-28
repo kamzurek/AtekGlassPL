@@ -1,4 +1,3 @@
-// gallery.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import AOS from 'aos';
 import '/src/App.css';
@@ -17,14 +16,13 @@ export default function Gallery() {
         { src: '/kabina1.jpg',     alt: 'Szkło 6' },
         { src: '/wizytowka.jpg',   alt: 'Szkło 7' },
         { src: '/hartowane.jpg',   alt: 'Szkło 8' },
-        // nowa paczka: galery (1) .. galery (27)
         ...Array.from({ length: 27 }, (_, i) => ({
-            src: `/galery (${i + 1}).JPG`, // upewnij się, że wielkość liter zgadza się z plikami na serwerze
+            src: `/galery (${i + 1}).JPG`,
             alt: `Szkło ${i + 9}`,
         })),
     ];
 
-    const previewCount = 7; // ile pokazać „na liście”
+    const previewCount = 7;
     const total = allImages.length;
     const remainingCount = Math.max(total - previewCount, 0);
     const previewImages = allImages.slice(0, previewCount);
@@ -55,7 +53,7 @@ export default function Gallery() {
         return () => window.removeEventListener('keydown', onKey);
     }, [selectedIndex, total]);
 
-    // Reset stanów po zamknięciu lightboxa
+    // Reset po zamknięciu
     useEffect(() => {
         if (selectedIndex === null) {
             setDragX(0);
@@ -67,21 +65,17 @@ export default function Gallery() {
     }, [selectedIndex]);
 
     const openFrom = (idx) => setSelectedIndex(idx);
-
-    const handleItemClick = (item, idx) => {
-        if (item.isMore) openFrom(previewCount);
-        else openFrom(idx);
-    };
+    const handleItemClick = (item, idx) => (item.isMore ? openFrom(previewCount) : openFrom(idx));
 
     // Zmiana slajdów
     const goPrev = () => setSelectedIndex((i) => (i - 1 + total) % total);
     const goNext = () => setSelectedIndex((i) => (i + 1) % total);
-
     const prevImage = (e) => { e.stopPropagation(); goPrev(); };
     const nextImage = (e) => { e.stopPropagation(); goNext(); };
 
     // --- SWIPE (Pointer Events) ---
     const startXRef = useRef(0);
+    const startTRef = useRef(0);          // czas startu (ms)
     const slideDirRef = useRef(null);     // 'left' | 'right' | null
     const phaseRef = useRef('idle');      // 'idle' | 'out' | 'in'
 
@@ -99,6 +93,7 @@ export default function Gallery() {
         }
 
         startXRef.current = e.clientX;
+        startTRef.current = performance.now();
         setDragging(true);
         setAnimating(false);
     };
@@ -124,16 +119,23 @@ export default function Gallery() {
         }
 
         const dx = dragX;
+        const dt = Math.max(1, performance.now() - startTRef.current); // ms
+        const velocity = dx / dt; // px/ms
+
         setDragging(false);
 
-        // próg akceptacji gestu obliczamy dynamicznie
-        const thresholdPx = Math.min(Math.floor((window.innerWidth || 0) * 0.18), 120);
+        // Próg i flick velocity (bardziej wyrozumiałe na telefonach)
+        const distanceThreshold = Math.max(48, Math.min(Math.floor((window.innerWidth || 320) * 0.12), 96)); // 12% szer./min 48px
+        const velocityThreshold = 0.45; // ~450 px/s
 
-        // mały ruch → powrót na środek
-        if (Math.abs(dx) < thresholdPx) {
+        const accept =
+            Math.abs(dx) >= distanceThreshold || Math.abs(velocity) >= velocityThreshold;
+
+        if (!accept) {
+            // powrót do środka
             setAnimating(true);
-            setDragX(0);
-            // zakończenie przechwyci onTransitionEnd
+            // rAF: upewnia, że transition się zastosuje
+            requestAnimationFrame(() => setDragX(0));
             return;
         }
 
@@ -142,28 +144,29 @@ export default function Gallery() {
         slideDirRef.current = dir;
         phaseRef.current = 'out';
 
-        // 1) wyjazd obecnego slajdu w stronę gestu
+        // WYJAZD obecnego slajdu w stronę gestu
         setAnimating(true);
         const outX = dir === 'left' ? -window.innerWidth : window.innerWidth;
-        setDragX(outX);
+        // rAF: wymuś start animacji (często kluczowe na mobile)
+        requestAnimationFrame(() => setDragX(outX));
     };
 
     const onTransitionEnd = (e) => {
-        // interesuje nas tylko zakończenie transform
-        if (e.propertyName !== 'transform') return;
+        // tylko transform na wrapperze
+        if (e.target !== e.currentTarget || e.propertyName !== 'transform') return;
 
         if (phaseRef.current === 'out' && slideDirRef.current) {
-            // 2) zmiana slajdu
+            // Zmień slajd
             const dir = slideDirRef.current;
             if (dir === 'left') goNext(); else goPrev();
 
-            // 3) TELEPORT nowego poza ekran po PRZECIWNEJ stronie (bez animacji)
+            // TELEPORT nowego poza ekran PO PRZECIWNEJ stronie (bez animacji)
             setAnimating(false);
             setDragX(dir === 'left' ? window.innerWidth : -window.innerWidth);
 
-            // 4) kolejny frame: włącz animację i wjazd do środka
+            // Następny frame: włącz animację i wjedź do środka
             requestAnimationFrame(() => {
-                requestAnimationFrame(() => { // podwójny rAF – stabilniej na mobile
+                requestAnimationFrame(() => { // podwójny rAF — stabilniej na iOS
                     phaseRef.current = 'in';
                     setAnimating(true);
                     setDragX(0);
@@ -173,7 +176,7 @@ export default function Gallery() {
         }
 
         if (phaseRef.current === 'in' || animating) {
-            // 5) zakończ wjazd lub powrót
+            // Zakończ wjazd / powrót
             phaseRef.current = 'idle';
             setAnimating(false);
             slideDirRef.current = null;
@@ -220,7 +223,7 @@ export default function Gallery() {
                 <div className="lightbox" onClick={() => setSelectedIndex(null)}>
                     <button className="nav left" onClick={prevImage} aria-label="Poprzednie zdjęcie">‹</button>
 
-                    {/* wrap: trzyma obraz i licznik; przesuwamy cały wrap */}
+                    {/* wrap: przesuwamy cały kontener (obraz + licznik) */}
                     <div
                         className={`lightbox-image-wrap ${animating ? 'is-animating' : ''} ${dragging ? 'is-dragging' : ''}`}
                         onClick={(e) => e.stopPropagation()}
@@ -232,7 +235,6 @@ export default function Gallery() {
                         onTransitionEnd={onTransitionEnd}
                         style={{
                             transform: `translateX(${dragX}px)`,
-                            // delikatny fade podczas przeciągania
                             opacity: dragging ? Math.max(0.75, 1 - Math.min(Math.abs(dragX) / 900, 0.25)) : 1,
                         }}
                     >

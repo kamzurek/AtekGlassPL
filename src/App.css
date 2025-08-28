@@ -601,3 +601,7 @@ body.dark-mode .icon-circle svg { color: inherit; }
         padding-right: max(0px, env(safe-area-inset-right));
     }
 }
+
+/* swipe i bezpieczne strefy */
+.lightbox { touch-action: pan-y; }
+.lightbox-image-wrap { will-change: transform; }
