@@ -80,9 +80,13 @@ export default function Gallery() {
 
     const onPointerDown = (e) => {
         e.stopPropagation();
-        // blokujemy domyślne „przeciąganie obrazka”
-        e.preventDefault();
-        try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+        e.preventDefault(); // blokuje natywne przeciąganie obrazka
+
+        const tgt = e.currentTarget;
+        if (tgt && typeof tgt.setPointerCapture === 'function') {
+            tgt.setPointerCapture(e.pointerId);
+        }
+
         startXRef.current = e.clientX;
         setDragging(true);
         setAnimating(false);
@@ -93,54 +97,54 @@ export default function Gallery() {
         const delta = e.clientX - startXRef.current;
         setDragX(delta);
     };
-
-    const animateTo = (x, cb, duration = 240) => {
-        setAnimating(true);
-        setDragX(x);
-        window.setTimeout(() => {
-            if (cb) cb();
-        }, duration);
-    };
-
     const onPointerUp = (e) => {
         if (!dragging) return;
         e.stopPropagation();
-        try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
+
+        const tgt = e.currentTarget;
+        if (
+            tgt &&
+            typeof tgt.releasePointerCapture === 'function' &&
+            typeof tgt.hasPointerCapture === 'function' &&
+            tgt.hasPointerCapture(e.pointerId)
+        ) {
+            tgt.releasePointerCapture(e.pointerId);
+        }
+
         const dx = dragX;
         setDragging(false);
 
-        // próg akceptacji gestu
+        // mały ruch → powrót na środek
         if (Math.abs(dx) < thresholdPx) {
             setAnimating(true);
             setDragX(0);
-            return window.setTimeout(() => setAnimating(false), 240);
+            window.setTimeout(() => setAnimating(false), 240);
+            return;
         }
 
-        // kierunek gestu: lewo = next, prawo = prev
+        // kierunek gestu
         const dir = dx < 0 ? 'left' : 'right';
         const outX = dir === 'left' ? -window.innerWidth : window.innerWidth;
 
-        // 1) Wyjedź obecnym slajdem w stronę gestu
+        // 1) wyjazd obecnego slajdu w stronę gestu
         setAnimating(true);
         setDragX(outX);
 
         window.setTimeout(() => {
-            // 2) Zmień slajd
+            // 2) zmiana slajdu
             if (dir === 'left') goNext(); else goPrev();
 
-            // 3) TELEPORT nowego slajdu poza ekran po PRZECIWNEJ stronie BEZ animacji
-            // (dla swipe w LEWO wjeżdżamy z PRAWEJ -> +window.innerWidth)
+            // 3) teleport nowego poza ekran po PRZECIWNEJ stronie (bez animacji)
             setAnimating(false);
             setDragX(dir === 'left' ? window.innerWidth : -window.innerWidth);
 
-            // 4) W następnym frame włącz animację i jedź do środka
+            // 4) następny frame: włącz animację i jedź do środka
             requestAnimationFrame(() => {
                 setAnimating(true);
                 setDragX(0);
-                // po dojechaniu wyłącz czysto pomocniczo "is-animating"
                 window.setTimeout(() => setAnimating(false), 240);
             });
-        }, 180); // czas wyjazdu starego slajdu (dopasuj do CSS)
+        }, 180);
     };
 
     return (
