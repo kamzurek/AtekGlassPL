@@ -175,6 +175,8 @@ export default function Gallery() {
                                 alt={isMore ? `Pozostałe zdjęcia (${countText})` : item.alt}
                                 className={isMore ? 'blurred' : ''}
                                 draggable={false}
+                                loading={"lazy"}
+                                decoding={"async"}
                             />
                             <div className={`overlay ${isMore ? 'overlay--visible' : ''}`}>
                                 {countText}
@@ -200,6 +202,8 @@ export default function Gallery() {
                             src={allImages[selectedIndex].src}
                             alt={allImages[selectedIndex].alt}
                             draggable={false}
+                            loading={"eager"}
+                            decoding={"async"}
                         />
                         <div className="lightbox-counter" aria-live="polite">
                             {selectedIndex + 1}/{total}

@@ -71,9 +71,14 @@ export default function Contact() {
                 </div>
 
             </div>
-            <div className="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2559.6249568098037!2d18.44650177681262!3d50.09330831301413!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47114595c5820a6d%3A0xdce5a189090c559a!2sATEK-GLASS%20Hurtownia%20Szk%C5%82a%20Karol%20Dubaj!5e0!3m2!1spl!2spl!4v1752399159306!5m2!1spl!2spl">
-                </iframe>
+            <div className="map-container" role="region" aria-label="Mapa dojazdu – Atek Glass">
+                <iframe
+                    title="Mapa dojazdu – Atek Glass, Rybnik"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2559.6249568098037!2d18.44650177681262!3d50.09330831301413!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47114595c5820a6d%3A0xdce5a189090c559a!2sATEK-GLASS%20Hurtownia%20Szk%C5%82a%20Karol%20Dubaj!5e0!3m2!1spl!2spl!4v1752399159306!5m2!1spl!2spl"
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                />
             </div>
         </section>
     );
