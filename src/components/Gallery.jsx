@@ -1,4 +1,3 @@
-// gallery.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import AOS from 'aos';
 import '/src/App.css';
@@ -9,18 +8,18 @@ export default function Gallery() {
 
     // Wszystkie obrazy
     const allImages = [
-        { src: '/aneks.jpg',       alt: 'Szkło 1' },
-        { src: '/galeria1.jpg',    alt: 'Szkło 2' },
-        { src: '/balustrada.jpg',  alt: 'Szkło 3' },
-        { src: '/lustro.jpg',      alt: 'Szkło 4' },
-        { src: '/grafika2.jpg',    alt: 'Szkło 5' },
-        { src: '/kabina1.jpg',     alt: 'Szkło 6' },
-        { src: '/wizytowka.jpg',   alt: 'Szkło 7' },
-        { src: '/hartowane.jpg',   alt: 'Szkło 8' },
+        { src: '/aneks.jpg',      alt: 'Szkło hartowane nad blatem kuchennym – Rybnik' },
+        { src: '/galeria1.jpg',   alt: 'Realizacje Atek Glass – szkło na wymiar Rybnik' },
+        { src: '/balustrada.jpg', alt: 'Balustrada szklana na schodach – Rybnik' },
+        { src: '/lustro.jpg',     alt: 'Lustro na wymiar z polerowaną krawędzią – Rybnik' },
+        { src: '/grafika2.jpg',   alt: 'Grafika na szkle do kuchni – Rybnik' },
+        { src: '/kabina1.jpg',    alt: 'Kabina prysznicowa ze szkła hartowanego – Rybnik' },
+        { src: '/wizytowka.jpg',  alt: 'Wizytówka firmowa Atek Glass – kontakt Rybnik' },
+        { src: '/hartowane.jpg',  alt: 'Szkło hartowane 8–10 mm – realizacja Rybnik' },
         // nowa paczka: galery (1) .. galery (27)
         ...Array.from({ length: 27 }, (_, i) => ({
-            src: `/galery (${i + 1}).JPG`, // upewnij się co do wielkości liter na serwerze
-            alt: `Szkło ${i + 9}`,
+            src: `/galery (${i + 1}).JPG`,
+            alt: `Szkło hartowane, kabiny, aneksy, na wymiar ${i + 9}`,
         })),
     ];
 
@@ -79,9 +78,9 @@ export default function Gallery() {
             (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
         // Wyższa czułość na dotyku:
         return {
-            distance: isTouch ? 20 : 40,     // px (było 40)
-            velocity: isTouch ? 0.25 : 0.45, // px/ms (było 0.45)
-            debounce: isTouch ? 140 : 220,   // ms (było 220)
+            distance: isTouch ? 20 : 40,
+            velocity: isTouch ? 0.25 : 0.45,
+            debounce: isTouch ? 140 : 220,
         };
     };
 
@@ -89,7 +88,7 @@ export default function Gallery() {
         if (selectedIndex === null) return;
 
         e.stopPropagation();
-        if (e.cancelable) e.preventDefault(); // blokuje natywny drag img/gesty przeglądarki
+        if (e.cancelable) e.preventDefault();
 
         const tgt = e.currentTarget;
         if (tgt && typeof tgt.setPointerCapture === 'function') {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '/src/App.css';
-import logo from '/public/logopng.png';// Zaimportuj logo
+import logo from '/public/logopng.png';
 
 export default function Navbar({ activeSection, darkMode, toggleDarkMode }) {
     const [isOpen, setIsOpen] = useState(false);

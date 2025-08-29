@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="https://www.google.com/schemas/sitemap-image/1.1">
+    <url>
+        <loc>https://atekglass.pl/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+
+        <!-- przykładowe obrazy z /public -->
+        <image:image>
+            <image:loc>https://atekglass.pl/aneks.jpg</image:loc>
+            <image:title>Szkło hartowane nad blatem – Rybnik</image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://atekglass.pl/balustrada.jpg</image:loc>
+            <image:title>Balustrada szklana – Rybnik</image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://atekglass.pl/galeria1.jpg</image:loc>
+            <image:title>Realizacje Atek Glass – Rybnik</image:title>
+        </image:image>
+
+        <!-- pliki ze spacjami w nazwie muszą mieć %20 -->
+        <image:image>
+            <image:loc>https://atekglass.pl/galery%20(1).JPG</image:loc>
+            <image:title>Realizacja – szkło na wymiar</image:title>
+        </image:image>
+    </url>
+</urlset>
