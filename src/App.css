@@ -585,3 +585,110 @@ body.dark-mode .icon-circle svg { color: inherit; }
 }
 
 .lightbox-image-wrap { touch-action: none; }
+
+/* reset przycisku */
+.theme-toggle{
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    line-height: 0;
+    border-radius: 9999px; /* dla ładnego focusa */
+}
+
+/* tor przełącznika */
+.theme-toggle .tt-track{
+    position: relative;
+    display: block;
+    width: var(--tt-w);
+    height: var(--tt-h);
+    border-radius: 9999px;
+    background: var(--tt-bg-light);
+    border: 1px solid rgba(0,0,0,.15);
+    transition: background .25s, border-color .25s;
+}
+
+/* ikony – wycentrowane i bez przezroczystości */
+.theme-toggle .tt-icon{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    pointer-events: none;
+    transition: color .25s ease;
+}
+.theme-toggle .tt-icon.sun{ left: 9px; }
+.theme-toggle .tt-icon.moon{ right: 9px; }
+
+/* domyślnie (tryb jasny) – żółte słońce, ciemny księżyc */
+.theme-toggle .tt-icon.sun{ color: #f5d76e; }  /* 🌞 */
+.theme-toggle .tt-icon.moon{ color: #222; }    /* 🌙 przygaszony */
+
+/* suwak (kulka) */
+.theme-toggle .tt-thumb{
+    position: absolute;
+    top: calc(var(--tt-pad) - 1px); /* 👈 podniesiona o 1px */
+    left: var(--tt-pad);
+    width: calc(var(--tt-h) - var(--tt-pad) * 2);
+    height: calc(var(--tt-h) - var(--tt-pad) * 2);
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    transition: transform .25s ease;
+}
+
+/* hover efekt (jasny tryb) */
+.theme-toggle:hover .tt-track {
+    box-shadow: 0 0 0 2px rgba(0,0,0,.25); /* taki sam jak w dark */
+}
+
+/* stan DARK */
+.theme-toggle.is-dark .tt-track{
+    background: var(--tt-bg-dark);
+    border-color: rgba(255,255,255,.15);
+}
+.theme-toggle.is-dark .tt-thumb{
+    transform: translateX(calc(var(--tt-w) - var(--tt-h)));
+}
+.theme-toggle.is-dark:hover .tt-track {
+    box-shadow: 0 0 0 2px rgba(255,255,255,.35);
+}
+/* w ciemnym – białe słońce, księżyc szary */
+.theme-toggle.is-dark .tt-icon.sun{ color: #fff; }
+.theme-toggle.is-dark .tt-icon.moon{ color: #9ca3af; }
+
+/* focus ring – dostępny, ale subtelny */
+.theme-toggle:focus{ outline: none; }
+.theme-toggle:focus-visible{
+    box-shadow: 0 0 0 2px rgba(0,0,0,.25);
+}
+.theme-toggle.is-dark:focus-visible{
+    box-shadow: 0 0 0 2px rgba(255,255,255,.35);
+}
+
+.theme-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* odstęp między suwakiem a podpisem */
+}
+
+.theme-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ccc;
+    user-select: none;
+    transition: color 0.25s ease;
+}
+
+/* kolor podpisu w trybie jasnym */
+.theme-toggle-wrapper .theme-label {
+    color: #333;
+}
+
+/* kolor podpisu w trybie ciemnym */
+.theme-toggle-wrapper .is-dark ~ .theme-label {
+    color: #eee;
+}
+
+

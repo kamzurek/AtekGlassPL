@@ -24,6 +24,14 @@
   /* Rozmieszczenie */
   --section-padding: 6rem 2rem;
   --mobile-section-padding: 4rem 1rem;
+
+    --toggle-bg: #e0e0e0;
+    --toggle-bg-dark: #333;
+    --tt-w: 64px;
+    --tt-h: 32px;
+    --tt-pad: 4px;
+    --tt-bg-light:#e6e6e9;
+    --tt-bg-dark:#2f2f33;
 }
 
 /* Przeniesione z .dark-mode do body.dark-mode */
