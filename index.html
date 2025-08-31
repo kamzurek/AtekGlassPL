@@ -1,15 +1,76 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+
+    <!-- Ikony -->
     <link rel="icon" href="/atekglass.ico" sizes="any">
-  <meta name="description" content="ATEK-GLASS - profesjonalna hurtownia szkła" />
-  <title>ATEK-GLASS | Hurtownia Szkła</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <!-- (opcjonalnie) -->
+    <!-- <link rel="apple-touch-icon" href="/apple-touch-icon.png"> -->
+
+    <!-- Kanoniczny URL (apex) -->
+    <link rel="canonical" href="https://atekglass.pl/">
+
+    <!-- Podstawowe SEO -->
+    <title>ATEK-GLASS – Hurtownia Szkła Rybnik</title>
+    <meta name="description" content="Hurtownia szkła w Rybniku i okolicach: kabiny prysznicowe, lustra, lacobel, balustrady i szkło na wymiar. Pomiar, produkcja, montaż. Szybkie terminy i gwarancja. Zadzwoń: +48 731 721 706.">
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#0b2a4a" />
+
+    <!-- Hreflang -->
+    <link rel="alternate" href="https://atekglass.pl/" hreflang="pl-PL">
+    <link rel="alternate" href="https://atekglass.pl/" hreflang="x-default">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pl_PL">
+    <meta property="og:site_name" content="Atek Glass">
+    <meta property="og:url" content="https://atekglass.pl/">
+    <meta property="og:title" content="ATEK-GLASS – Hurtownia Szkła Rybnik: kabiny, lustra, szkło na wymiar">
+    <meta property="og:description" content="Pomiary, produkcja i montaż w Rybniku. Sprawdź realizacje i skontaktuj się.">
+    <meta property="og:image" content="https://atekglass.pl/og-cover.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Atek Glass – Hurtownia Szkła Rybnik">
+    <meta name="twitter:description" content="Kabiny prysznicowe, lustra, lacobel, balustrady – Rybnik i okolice.">
+    <meta name="twitter:image" content="https://atekglass.pl/og-cover.jpg">
+
+    <!-- Dane strukturalne (LocalBusiness) -->
+    <script type="application/ld+json">
+        {
+            "@context":"https://schema.org",
+            "@type":"LocalBusiness",
+            "name":"Atek-Glass",
+            "url":"https://atekglass.pl/",
+            "image":"https://atekglass.pl/og-cover.jpg",
+            "telephone":"+48 731 721 706",
+            "address":{
+                "@type":"PostalAddress",
+                "addressCountry":"PL",
+                "addressRegion":"Śląskie",
+                "addressLocality":"Szczerbice",
+                "postalCode":"44-293",
+                "streetAddress":"Radoszowska 65a"
+            },
+            "areaServed":["Rybnik","Żory","Wodzisław Śląski","Jastrzębie-Zdrój","powiat rybnicki"],
+            "geo": { "@type":"GeoCoordinates", "latitude": 50.0933049, "longitude": 18.4490767 },
+            "priceRange":"$$",
+            "description":"Szklarz: kabiny prysznicowe, lustra, szkło hartowane i lacobel, balustrady, grafika na szkle. Pomiary, produkcja, montaż w Rybniku i okolicach."
+        }
+    </script>
+
+    <!-- Preload kluczowego obrazu (hero) dla lepszego LCP; podmień ścieżkę, jeśli inna -->
+    <link rel="preload" as="image" href="/heropic4.png" imagesrcset="/heropic4.png 1x" />
+
+    <!-- Czcionki i AOS (zostawiamy jak było) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
 </head>
 <body>
 <div id="root"></div>
