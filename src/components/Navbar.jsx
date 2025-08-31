@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import '/src/App.css';
-import logo from '/public/logopng.png';// Zaimportuj logo
+import logo from '/public/logopng.png';
+import { FaSun, FaMoon } from "react-icons/fa";
+// Zaimportuj logo
 
 export default function Navbar({ activeSection, darkMode, toggleDarkMode }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -85,15 +87,26 @@ export default function Navbar({ activeSection, darkMode, toggleDarkMode }) {
                 </a>
             </div>
 
-            <button
-                id="theme-toggle-btn"
-                aria-label="Przełącz tryb jasny/ciemny"
-                onClick={toggleDarkMode}
-                className="theme-toggle-btn"
-                type="button"
-            >
-                {darkMode ? '🌞' : '🌙'}
-            </button>
+            <div className="theme-toggle-wrapper">
+                <button
+                    id="theme-toggle-btn"
+                    type="button"
+                    role="switch"
+                    aria-checked={darkMode}
+                    aria-label="Przełącz tryb jasny/ciemny"
+                    onClick={toggleDarkMode}
+                    className={`theme-toggle ${darkMode ? "is-dark" : "light"}`}
+                >
+                    <span className="tt-track">
+                      <FaSun className="tt-icon sun" aria-hidden />
+                      <FaMoon className="tt-icon moon" aria-hidden />
+                      <span className="tt-thumb" />
+                    </span>
+                </button>
+                <span className="theme-label">
+                    Tryb: {darkMode ? "Ciemny" : "Jasny"}
+                  </span>
+            </div>
 
             <button
                 className={`menu-toggle ${isOpen ? 'open' : ''}`}
