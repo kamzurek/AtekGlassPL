@@ -69,6 +69,8 @@
 
 /* ===== SEKCJA HERO ===== */
 .hero {
+    /* height: 100vh oznacza 100% wysokości widocznego ekranu */
+
     height: 100vh;
     display: flex;
     align-items: center;
@@ -76,18 +78,22 @@
     color: #fff;
     text-align: center;
     padding: 0 1rem;
+
+    /* ZMIANA PONIŻEJ: */
+    /* Zmniejszyłem przyciemnienie z 0.8/0.7 na 0.4/0.3 */
     background:
-            linear-gradient(rgba(17, 22, 30, 0.8), rgba(17, 22, 30, 0.7)),
-            url("/heropic4.png") center/cover no-repeat;
+            linear-gradient(rgba(17, 22, 30, 0.4), rgba(17, 22, 30, 0.3)),
+            url("/heropic6.jpg") center/cover no-repeat;
+
     box-shadow: var(--shadow-lg);
     transition: box-shadow 0.3s ease;
 }
 
 .hero h1 {
     font-size: 3rem;
-    max-width: 800px;
+    max-width: 850px;
     text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7);
-    font-weight: 700;
+    font-weight: 750;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     transition: color 0.3s ease, text-shadow 0.3s ease;
     color: #eee;

@@ -34,6 +34,8 @@
     --tt-bg-dark:#2f2f33;
 }
 
+
+
 /* Przeniesione z .dark-mode do body.dark-mode */
 body.dark-mode {
   --main-color: #99ccee;
