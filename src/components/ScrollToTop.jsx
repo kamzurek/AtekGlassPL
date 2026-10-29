@@ -1,42 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FaArrowUp } from 'react-icons/fa';
-import '/src/App.css'
 
 export default function ScrollToTop() {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        const toggleVisibility = () => {
-            if (window.scrollY > 300) {
-                setIsVisible(true);
-            } else {
-                setIsVisible(false);
-            }
+        let frame = null;
+        const update = () => {
+            frame = null;
+            setIsVisible(window.scrollY > 300);
         };
-
-        window.addEventListener('scroll', toggleVisibility);
-        return () => window.removeEventListener('scroll', toggleVisibility);
+        const schedule = () => {
+            if (frame === null) frame = requestAnimationFrame(update);
+        };
+        update();
+        window.addEventListener('scroll', schedule, { passive: true });
+        return () => {
+            window.removeEventListener('scroll', schedule);
+            if (frame !== null) cancelAnimationFrame(frame);
+        };
     }, []);
 
     const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        document.getElementById('main-content')?.focus({ preventScroll: true });
+        window.scrollTo({ top: 0, behavior: reduceMotion ? 'instant' : 'smooth' });
     };
 
-    return (
+    return isVisible ? (
         <div className="scroll-to-top">
-            {isVisible && (
-                <button
-                    onClick={scrollToTop}
-                    aria-label="Do góry"
-                    data-aos="fade-up"
-                    data-aos-delay="300"
-                >
-                    <FaArrowUp />
-                </button>
-            )}
+            <button type="button" className="button" onClick={scrollToTop}
+                aria-label="Przejdź na początek strony">
+                <FaArrowUp aria-hidden="true" />
+            </button>
         </div>
-    );
+    ) : null;
 }

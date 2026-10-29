@@ -1,100 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import '/src/App.css';
+import { useRef, useState } from 'react';
 
-export default function Offer() {
-    const offers = [
-        { title: 'Szkło okienne', icon: '🔍', description: 'Podstawowe szkło stosowane w oknach, zapewniające doskonałą izolację termiczną i akustyczną.' },
-        { title: 'Lustra (srebrne, brąz, grafit)', icon: '🔍', description: 'Wysokiej jakości lustra do łazienek, salonów i dekoracji wnętrz, dostępne w kilku wykończeniach kolorystycznych.' },
-        { title: 'Szkło żaroodporne', icon: '🔍', description: 'Odporne na wysoką temperaturę, idealne do kominków, pieców i urządzeń grzewczych.' },
-        { title: 'Szkło hartowane', icon: '🔍', description: 'Wzmocnione termicznie, poddane procesowi hartowania, co czyni je bezpiecznym i odpornym na uderzenia.' },
-        { title: 'Szkła kolorowe (lacobel, lacomat, decormat)', icon: '🔍', description: 'Barwione szkła dekoracyjne do mebli, ścianek działowych i elementów architektonicznych.' },
-        { title: 'Szkło bezpieczne (VSG laminowane)', icon: '🔍', description: 'Wielowarstwowe szkło laminowane z folią, chroniące przed rozbiciem i zwiększające bezpieczeństwo.' },
-        { title: 'Szkło z grafiką 3D (panele szklane)', icon: '🔍', description: 'Nowoczesne panele z grafiką UV, idealne jako szkło kuchenne czy dekoracyjne.' },
-        { title: 'Balustrady szklane', icon: '🔍', description: 'Eleganckie balustrady ze szkła ESG (hartowane/laminowane) do balkonów, tarasów i wnętrz.' },
-        { title: 'Kabiny prysznicowe', icon: '🔍', description: 'Gotowe i na wymiar kabiny ze szkła hartowanego.' },
-        { title: 'Ściany szklane / biura', icon: '🔍', description: 'Przeszklone ściany działowe do biur i przestrzeni komercyjnych, zapewniające elegancję i przepływ światła.' },
-        { title: 'Drzwi szklane', icon: '🔍', description: 'Szkło hartowane do drzwi wewnętrznych i zewnętrznych, z możliwością piaskowania i kolorowania.' },
-        { title: 'Daszki szklane', icon: '🔍', description: 'Szklane daszki przeciwwiatrowe i przeciwdeszczowe nad wejściami do budynków.' },
-        { title: 'Ogrody zimowe', icon: '🔍', description: 'Całoroczne konstrukcje ze szkła, łączące wnętrze z ogrodem, zapewniające izolację termiczną.' },
+const OFFERS = [
+        { title: 'Szkło okienne', description: 'Szkło do przeszkleń okiennych, dobierane do wymiarów i wymagań konkretnego zastosowania.' },
+        { title: 'Lustra (srebrne, brąz, grafit)', description: 'Wysokiej jakości lustra do łazienek, salonów i dekoracji wnętrz, dostępne w kilku wykończeniach kolorystycznych.' },
+        { title: 'Szkło żaroodporne', description: 'Odporne na wysoką temperaturę, idealne do kominków, pieców i urządzeń grzewczych.' },
+        { title: 'Szkło hartowane', description: 'Szkło poddane hartowaniu, o zwiększonej wytrzymałości mechanicznej i odporności na różnice temperatur.' },
+        { title: 'Szkła kolorowe (lacobel, lacomat, decormat)', description: 'Barwione szkła dekoracyjne do mebli, ścianek działowych i elementów architektonicznych.' },
+        { title: 'Szkło bezpieczne (VSG laminowane)', description: 'Szkło laminowane z warstwą folii, która po pęknięciu pomaga utrzymać odłamki razem.' },
+        { title: 'Szkło z grafiką 3D (panele szklane)', description: 'Nowoczesne panele z grafiką UV, idealne jako szkło kuchenne czy dekoracyjne.' },
+        { title: 'Balustrady szklane', description: 'Balustrady szklane do balkonów, tarasów i wnętrz. Rodzaj szkła dobierany do konstrukcji i wymagań projektu.' },
+        { title: 'Kabiny prysznicowe', description: 'Gotowe i na wymiar kabiny ze szkła hartowanego.' },
+        { title: 'Ściany szklane / biura', description: 'Przeszklone ściany działowe do biur i przestrzeni komercyjnych, zapewniające elegancję i przepływ światła.' },
+        { title: 'Drzwi szklane', description: 'Szkło hartowane do drzwi wewnętrznych i zewnętrznych, z możliwością piaskowania i kolorowania.' },
+        { title: 'Daszki szklane', description: 'Szklane daszki przeciwwiatrowe i przeciwdeszczowe nad wejściami do budynków.' },
+        { title: 'Ogrody zimowe', description: 'Całoroczne konstrukcje ze szkła, łączące wnętrze z ogrodem, zapewniające izolację termiczną.' },
     ];
 
-    const INITIAL_VISIBLE = 9;
+const INITIAL_VISIBLE = 9;
+
+export default function Offer() {
     const [showAll, setShowAll] = useState(false);
-    const [selected, setSelected] = useState(null);
-    const [modalOpen, setModalOpen] = useState(false);
+    const toggleRef = useRef(null);
+    const visibleOffers = showAll ? OFFERS : OFFERS.slice(0, INITIAL_VISIBLE);
+    const remaining = OFFERS.length - INITIAL_VISIBLE;
 
-    useEffect(() => {
-        AOS.init({ duration: 800, once: true });
-    }, []);
-
-    // po rozwinięciu odśwież animacje nowo dodanych kafelków
-    useEffect(() => {
-        // AOS v2:
-        if (typeof AOS.refreshHard === 'function') AOS.refreshHard();
-        else if (typeof AOS.refresh === 'function') AOS.refresh();
-    }, [showAll]);
-
-    const openModal = (offer) => {
-        setSelected(offer);
-        setModalOpen(true);
+    const toggleOffers = () => {
+        // Po zwinięciu przycisk przesuwa się w górę; pozostaje w widoku.
+        if (showAll) {
+            setShowAll(false);
+            requestAnimationFrame(() => {
+                toggleRef.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+            });
+        } else {
+            setShowAll(true);
+        }
     };
-
-    const closeModal = () => {
-        setModalOpen(false);
-        setSelected(null);
-    };
-
-    const visibleOffers = showAll ? offers : offers.slice(0, INITIAL_VISIBLE);
-    const remaining = Math.max(offers.length - INITIAL_VISIBLE, 0);
 
     return (
-        <section id="offer">
-            <h2>Oferta</h2>
-
-            <div
-                className={`card-list offer-grid ${showAll ? '' : 'offer-grid--collapsed'}`}
-                aria-expanded={showAll}
-            >
-                {visibleOffers.map((offer, idx) => (
-                    <div
-                        key={`${offer.title}-${idx}`}
-                        className="card"
-                        data-aos="fade-up"
-                        data-aos-delay={(idx % 9) * 80}
-                        onClick={() => openModal(offer)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openModal(offer)}
-                    >
-                        <div className="card-icon">{offer.icon}</div>
+        <section id="offer" aria-labelledby="offer-heading">
+            <h2 id="offer-heading">Oferta</h2>
+            <div id="offer-grid" className="card-list">
+                {visibleOffers.map((offer) => (
+                    <article key={offer.title} className="card">
                         <h3>{offer.title}</h3>
-                    </div>
+                        <p>{offer.description}</p>
+                    </article>
                 ))}
             </div>
-
-            {offers.length > INITIAL_VISIBLE && (
+            {remaining > 0 && (
                 <div className="offer-toggle-wrap">
                     <button
+                        ref={toggleRef}
                         type="button"
                         className="button offer-toggle"
-                        onClick={() => setShowAll((s) => !s)}
+                        onClick={toggleOffers}
                         aria-expanded={showAll}
-                        aria-controls="offer"
+                        aria-controls="offer-grid"
                     >
-                        {showAll ? 'Zwiń' : `Rozwiń ${remaining ? `(+${remaining})` : ''}`}
+                        {showAll ? 'Pokaż mniej usług' : `Pokaż wszystkie usługi (+${remaining})`}
                     </button>
-                </div>
-            )}
-
-            {modalOpen && selected && (
-                <div className="modal-overlay" onClick={closeModal}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close" onClick={closeModal} aria-label="Zamknij modal">×</button>
-                        <h3>{selected.title}</h3>
-                        <p>{selected.description}</p>
-                    </div>
                 </div>
             )}
         </section>

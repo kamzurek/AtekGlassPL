@@ -1,5 +1,3 @@
-import React from 'react';
-import '/src/App.css'
 import { FaFacebook, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from 'react-icons/fa';
 
 export default function Contact() {
@@ -8,10 +6,18 @@ export default function Contact() {
             <h2>Kontakt</h2>
             <div className="contact-info">
                 <div className="contact-item">
-                    <div className="icon-circle"><FaMapMarkerAlt /></div>
+                    <div className="icon-circle" aria-hidden="true"><FaMapMarkerAlt /></div>
                     <div className="contact-text">
                         <h3>Adres</h3>
-                        <p>ul. Radoszowska 65a, 44-293 Szczerbice</p>
+                        <address>ul. Radoszowska 65a, 44-293 Szczerbice</address>
+                        <a
+                            className="text-link"
+                            href="https://www.google.com/maps/dir/?api=1&destination=50.0933049%2C18.4490767"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Wyznacz trasę <span className="sr-only">(otwiera nową kartę)</span>
+                        </a>
                     </div>
                 </div>
                 <div className="contact-item">
@@ -28,7 +34,7 @@ export default function Contact() {
                     </div>
                 </div>
                 <div className="contact-item">
-                    <div className="icon-circle"><FaEnvelope /></div>
+                    <div className="icon-circle" aria-hidden="true"><FaEnvelope /></div>
                     <div className="contact-text">
                         <h3>Email</h3>
                         <p>
@@ -39,7 +45,7 @@ export default function Contact() {
                     </div>
                 </div>
                 <div className="contact-item">
-                    <div className="icon-circle"><FaClock /></div>
+                    <div className="icon-circle" aria-hidden="true"><FaClock /></div>
                     <div className="contact-text">
                         <h3>Godziny otwarcia</h3>
                         <p>Pon-Pt: 7:00-15:00<br />Sobota: 9:00-13:00<br />Niedziela: Zamknięte</p>
@@ -53,7 +59,7 @@ export default function Contact() {
                         rel="noopener noreferrer"
                         aria-label="Odwiedź nas na Facebooku"
                     >
-                        <FaFacebook />
+                        <FaFacebook aria-hidden="true" />
                     </a>
                     <div className="contact-text">
                         <h3>Znajdź nas na</h3>

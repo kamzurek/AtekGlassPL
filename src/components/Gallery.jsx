@@ -1,13 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import AOS from 'aos';
-import '/src/App.css';
-import 'aos/dist/aos.css';
+import { useEffect, useRef, useState } from 'react';
 
-export default function Gallery() {
-    const [selectedIndex, setSelectedIndex] = useState(null);
-
-    // Wszystkie obrazy
-    const allImages = [
+const IMAGES = [
         { src: '/aneks.jpg',      alt: 'Szkło hartowane nad blatem kuchennym – Rybnik' },
         { src: '/galeria1.jpg',   alt: 'Realizacje Atek Glass – szkło na wymiar Rybnik' },
         { src: '/balustrada.jpg', alt: 'Balustrada szklana na schodach – Rybnik' },
@@ -16,204 +9,112 @@ export default function Gallery() {
         { src: '/kabina1.jpg',    alt: 'Kabina prysznicowa ze szkła hartowanego – Rybnik' },
         { src: '/wizytowka.jpg',  alt: 'Wizytówka firmowa Atek Glass – kontakt Rybnik' },
         { src: '/hartowane.jpg',  alt: 'Szkło hartowane 8–10 mm – realizacja Rybnik' },
-        // nowa paczka: galery (1) .. galery (27)
         ...Array.from({ length: 27 }, (_, i) => ({
             src: `/galery (${i + 1}).JPG`,
             alt: `Szkło hartowane, kabiny, aneksy, na wymiar ${i + 9}`,
         })),
     ];
 
-    const previewCount = 7;
-    const total = allImages.length;
-    const remainingCount = Math.max(total - previewCount, 0);
-    const previewImages = allImages.slice(0, previewCount);
+const PREVIEW_COUNT = 7;
 
-    const displayItems =
-        remainingCount > 0
-            ? [...previewImages, { isMore: true, count: remainingCount }]
-            : [...previewImages];
-
-    const moreThumbSrc =
-        total > previewCount
-            ? allImages[previewCount].src
-            : previewImages[previewCount - 1]?.src;
+export default function Gallery() {
+    const [selectedIndex, setSelectedIndex] = useState(null);
+    const [failedSrc, setFailedSrc] = useState(null);
+    const dialogRef = useRef(null);
+    const isOpen = selectedIndex !== null;
+    const selectedImage = isOpen ? IMAGES[selectedIndex] : null;
+    const remaining = IMAGES.length - PREVIEW_COUNT;
+    const previewImages = IMAGES.slice(0, PREVIEW_COUNT);
 
     useEffect(() => {
-        AOS.init({ duration: 800, once: true });
-    }, []);
+        if (!isOpen) return;
+        const dialog = dialogRef.current;
+        const previousFocus = document.activeElement;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        dialog.showModal();
 
-    // Nawigacja klawiaturą (tylko gdy lightbox otwarty)
-    useEffect(() => {
-        if (selectedIndex === null) return;
-        const onKey = (e) => {
-            if (e.key === 'Escape') setSelectedIndex(null);
-            if (e.key === 'ArrowLeft') setSelectedIndex((i) => (i - 1 + total) % total);
-            if (e.key === 'ArrowRight') setSelectedIndex((i) => (i + 1) % total);
+        return () => {
+            dialog.close();
+            document.body.style.overflow = previousOverflow;
+            if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
+                previousFocus.focus({ preventScroll: true });
+            }
         };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, [selectedIndex, total]);
+    }, [isOpen]);
 
-    const openFrom = (idx) => setSelectedIndex(idx);
-    const handleItemClick = (item, idx) => (item.isMore ? openFrom(previewCount) : openFrom(idx));
-
-    // Zmiana slajdów
-    const goPrev = () => setSelectedIndex((i) => (i - 1 + total) % total);
-    const goNext = () => setSelectedIndex((i) => (i + 1) % total);
-
-    const prevImage = (e) => { e.stopPropagation(); goPrev(); };
-    const nextImage = (e) => { e.stopPropagation(); goNext(); };
-
-    // --- SWIPE bez animacji: jeden gest = jeden slajd, z progiem zależnym od typu pointera ---
-    const pointerIdRef = useRef(null);
-    const pointerTypeRef = useRef('mouse');
-    const startXRef = useRef(0);
-    const startTRef = useRef(0);
-    const handledRef = useRef(false);
-    const lastNavAtRef = useRef(0);
-
-    const getThresholds = () => {
-        const isTouch =
-            pointerTypeRef.current === 'touch' ||
-            (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
-        // Wyższa czułość na dotyku:
-        return {
-            distance: isTouch ? 20 : 40,
-            velocity: isTouch ? 0.25 : 0.45,
-            debounce: isTouch ? 140 : 220,
-        };
-    };
-
-    const onPointerDown = (e) => {
-        if (selectedIndex === null) return;
-
-        e.stopPropagation();
-        if (e.cancelable) e.preventDefault();
-
-        const tgt = e.currentTarget;
-        if (tgt && typeof tgt.setPointerCapture === 'function') {
-            tgt.setPointerCapture(e.pointerId);
-        }
-
-        pointerIdRef.current = e.pointerId;
-        pointerTypeRef.current = e.pointerType || 'mouse';
-        startXRef.current = e.clientX;
-        startTRef.current = performance.now();
-        handledRef.current = false;
-    };
-
-    const cleanupCapture = (e) => {
-        const tgt = e.currentTarget;
-        if (
-            tgt &&
-            typeof tgt.releasePointerCapture === 'function' &&
-            typeof tgt.hasPointerCapture === 'function' &&
-            tgt.hasPointerCapture(e.pointerId)
-        ) {
-            tgt.releasePointerCapture(e.pointerId);
-        }
-        pointerIdRef.current = null;
-    };
-
-    const onPointerUp = (e) => {
-        if (selectedIndex === null) return;
-        e.stopPropagation();
-        if (pointerIdRef.current !== e.pointerId) return;
-
-        const now = performance.now();
-        const { distance, velocity, debounce } = getThresholds();
-
-        if (now - lastNavAtRef.current < debounce) {
-            cleanupCapture(e);
-            return;
-        }
-
-        const dx = e.clientX - startXRef.current;
-        const dt = Math.max(1, now - startTRef.current);
-        const v = Math.abs(dx / dt); // px/ms
-
-        cleanupCapture(e);
-        if (handledRef.current) return;
-
-        const accept = Math.abs(dx) >= distance || v >= velocity;
-        if (!accept) return;
-
-        handledRef.current = true;
-        lastNavAtRef.current = now;
-
-        if (dx < 0) goNext(); else goPrev();
-    };
-
-    const onPointerCancel = (e) => {
-        cleanupCapture(e);
+    const close = () => setSelectedIndex(null);
+    const move = (direction) => setSelectedIndex((index) =>
+        index === null ? null : (index + direction + IMAGES.length) % IMAGES.length
+    );
+    const open = (index) => {
+        setFailedSrc(null);
+        setSelectedIndex(index);
     };
 
     return (
-        <section id="gallery">
-            <h2>Galeria</h2>
-
+        <section id="gallery" aria-labelledby="gallery-heading">
+            <h2 id="gallery-heading">Galeria realizacji</h2>
             <div className="gallery">
-                {displayItems.map((item, idx) => {
-                    const isMore = item.isMore === true;
-                    const src = isMore ? moreThumbSrc : item.src;
-                    const countText = isMore ? `+${remainingCount}` : '';
-
-                    return (
-                        <div
-                            key={idx}
-                            className="gallery-item"
-                            onClick={() => handleItemClick(item, idx)}
-                            data-aos="zoom-in"
-                            data-aos-delay={idx * 50}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => { if (e.key === 'Enter') handleItemClick(item, idx); }}
-                            aria-label={isMore ? `Zobacz pozostałe ${remainingCount} zdjęcia` : item.alt}
-                        >
-                            <img
-                                src={src}
-                                alt={isMore ? `Pozostałe zdjęcia (${countText})` : item.alt}
-                                className={isMore ? 'blurred' : ''}
-                                draggable={false}
-                                loading={"lazy"}
-                                decoding={"async"}
-                            />
-                            <div className={`overlay ${isMore ? 'overlay--visible' : ''}`}>
-                                {countText}
-                            </div>
-                        </div>
-                    );
-                })}
+                {previewImages.map((image, index) => (
+                    <button key={image.src} type="button" className="gallery-item"
+                        onClick={() => open(index)} aria-haspopup="dialog"
+                        aria-label={`Powiększ: ${image.alt}`}>
+                        <img src={image.src} alt={image.alt} loading="lazy"
+                            decoding="async" draggable={false} />
+                    </button>
+                ))}
+                {remaining > 0 && (
+                    <button type="button" className="gallery-item gallery-item--more"
+                        onClick={() => open(PREVIEW_COUNT)} aria-haspopup="dialog"
+                        aria-label={`Zobacz pozostałe zdjęcia: ${remaining}`}>
+                        <img src={IMAGES[PREVIEW_COUNT].src} alt="" loading="lazy"
+                            decoding="async" draggable={false} />
+                        <span className="overlay" aria-hidden="true">+{remaining}</span>
+                    </button>
+                )}
             </div>
-
-            {selectedIndex !== null && (
-                <div className="lightbox" onClick={() => setSelectedIndex(null)}>
-                    <button className="nav left" onClick={prevImage} aria-label="Poprzednie zdjęcie">‹</button>
-
-                    {/* Bez animacji – sam gest i licznik */}
-                    <div
-                        className="lightbox-image-wrap"
-                        onClick={(e) => e.stopPropagation()}
-                        onPointerDown={onPointerDown}
-                        onPointerUp={onPointerUp}
-                        onPointerCancel={onPointerCancel}
-                    >
-                        <img
-                            src={allImages[selectedIndex].src}
-                            alt={allImages[selectedIndex].alt}
-                            draggable={false}
-                            loading={"eager"}
-                            decoding={"async"}
-                        />
-                        <div className="lightbox-counter" aria-live="polite">
-                            {selectedIndex + 1}/{total}
-                        </div>
-                    </div>
-
-                    <button className="nav right" onClick={nextImage} aria-label="Następne zdjęcie">›</button>
-                    <button className="close-btn" onClick={() => setSelectedIndex(null)} aria-label="Zamknij">×</button>
+            <dialog ref={dialogRef} className="lightbox"
+                aria-labelledby="gallery-dialog-heading"
+                onCancel={(event) => { event.preventDefault(); close(); }}
+                onClick={(event) => {
+                    if (event.target !== event.currentTarget) return;
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    if (event.clientX < rect.left || event.clientX > rect.right ||
+                        event.clientY < rect.top || event.clientY > rect.bottom) close();
+                }}
+                onKeyDown={(event) => {
+                    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                        event.preventDefault();
+                        move(event.key === 'ArrowLeft' ? -1 : 1);
+                    }
+                }}>
+                <div className="lightbox-header">
+                    <h2 id="gallery-dialog-heading">Galeria realizacji</h2>
+                    <button type="button" className="lightbox-control close-btn"
+                        onClick={close} autoFocus aria-label="Zamknij galerię">×</button>
                 </div>
-            )}
+                <button type="button" className="lightbox-control nav left"
+                    onClick={() => move(-1)} aria-label="Poprzednie zdjęcie">‹</button>
+                <div className="lightbox-image-wrap">
+                    {selectedImage && (failedSrc === selectedImage.src ? (
+                        <div className="image-error" role="status">
+                            <p>Nie udało się wczytać zdjęcia.</p>
+                            <button type="button" className="button"
+                                onClick={() => setFailedSrc(null)}>Spróbuj ponownie</button>
+                        </div>
+                    ) : (
+                        <img key={selectedImage.src} src={selectedImage.src}
+                            alt={selectedImage.alt} decoding="async"
+                            onError={() => setFailedSrc(selectedImage.src)} />
+                    ))}
+                </div>
+                <button type="button" className="lightbox-control nav right"
+                    onClick={() => move(1)} aria-label="Następne zdjęcie">›</button>
+                <p className="lightbox-counter" role="status" aria-atomic="true">
+                    {selectedImage && `Zdjęcie ${selectedIndex + 1} z ${IMAGES.length}. ${selectedImage.alt}`}
+                </p>
+            </dialog>
         </section>
     );
 }

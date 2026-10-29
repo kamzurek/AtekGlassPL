@@ -1,123 +1,107 @@
-import React, { useState } from 'react';
-import '/src/App.css';
-import logo from '/public/logopng.png';
-import { FaSun, FaMoon } from "react-icons/fa";
-// Zaimportuj logo
+import { useEffect, useRef, useState } from 'react';
+import { FaSun, FaMoon } from 'react-icons/fa';
+
+const LINKS = [
+    { href: '#about', label: 'O nas' },
+    { href: '#offer', label: 'Oferta' },
+    { href: '#gallery', label: 'Galeria' },
+    { href: '#contact', label: 'Kontakt' },
+];
 
 export default function Navbar({ activeSection, darkMode, toggleDarkMode }) {
     const [isOpen, setIsOpen] = useState(false);
+    const navRef = useRef(null);
+    const menuButtonRef = useRef(null);
 
-    const scrollToSection = (e, sectionId) => {
-        e.preventDefault();
-        setIsOpen(false);
-        const section = document.querySelector(sectionId);
-        if (section) {
-            const navbarHeight = document.querySelector('.navbar').offsetHeight;
-            window.scrollTo({
-                top: section.offsetTop - navbarHeight,
-                behavior: 'smooth',
-            });
+    useEffect(() => {
+        const navbar = navRef.current;
+        const updateHeight = () => document.documentElement.style.setProperty(
+            '--navbar-height', `${navbar.getBoundingClientRect().height}px`
+        );
+        updateHeight();
+        const observer = new ResizeObserver(updateHeight);
+        observer.observe(navbar);
+        const desktop = window.matchMedia('(min-width: 961px)');
+        const closeOnDesktop = () => { if (desktop.matches) setIsOpen(false); };
+        desktop.addEventListener('change', closeOnDesktop);
+        return () => {
+            observer.disconnect();
+            desktop.removeEventListener('change', closeOnDesktop);
+            document.documentElement.style.removeProperty('--navbar-height');
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        const onKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                setIsOpen(false);
+                menuButtonRef.current?.focus();
+            }
+        };
+        const onPointerDown = (event) => {
+            if (!navRef.current?.contains(event.target)) setIsOpen(false);
+        };
+        document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('pointerdown', onPointerDown);
+        return () => {
+            document.removeEventListener('keydown', onKeyDown);
+            document.removeEventListener('pointerdown', onPointerDown);
+        };
+    }, [isOpen]);
+
+    const closeForNavigation = (event) => {
+        // Przy zwykłej nawigacji przenieś fokus z zamykanego menu na cel linku.
+        if (!event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
+            const target = document.getElementById(event.currentTarget.hash.slice(1));
+            if (target) {
+                target.setAttribute('tabindex', '-1');
+                target.focus({ preventScroll: true });
+            }
+            setIsOpen(false);
         }
     };
 
-    // Funkcja do przewijania na górę strony
-    const scrollToTop = (e) => {
-        e.preventDefault();
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-        });
-    };
-
     return (
-        <nav className="navbar">
-            {/* Zastąpienie tekstu logo obrazkiem */}
-            <a
-                href="#"
-                onClick={scrollToTop}
-                className="logo-link"
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    textDecoration: 'none'
-                }}
-            >
-                <img
-                    src={logo}
-                    alt="ATEK-GLASS Logo"
-                    className="logo-img"
-                    style={{
-                        height: '50px', // Dostosuj wysokość według potrzeb
-                        width: 'auto',
-                        transition: 'transform 0.3s ease'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                />
+        <nav ref={navRef} className="navbar" aria-label="Nawigacja główna"
+            onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false);
+            }}>
+            <a href="#main-content" className="logo-link" onClick={closeForNavigation}
+                aria-label="ATEK-GLASS — początek strony">
+                <img src="/logopng.png" alt="ATEK-GLASS" className="logo-img" />
             </a>
-
-            <div className={`nav-links ${isOpen ? 'open' : ''}`}>
-                <a
-                    href="#about"
-                    onClick={(e) => scrollToSection(e, '#about')}
-                    className={activeSection === '#about' ? 'active' : ''}
-                >
-                    O nas
-                </a>
-                <a
-                    href="#offer"
-                    onClick={(e) => scrollToSection(e, '#offer')}
-                    className={activeSection === '#offer' ? 'active' : ''}
-                >
-                    Oferta
-                </a>
-                <a
-                    href="#gallery"
-                    onClick={(e) => scrollToSection(e, '#gallery')}
-                    className={activeSection === '#gallery' ? 'active' : ''}
-                >
-                    Galeria
-                </a>
-                <a
-                    href="#contact"
-                    onClick={(e) => scrollToSection(e, '#contact')}
-                    className={activeSection === '#contact' ? 'active' : ''}
-                >
-                    Kontakt
-                </a>
+            <button ref={menuButtonRef} type="button"
+                className={`menu-toggle${isOpen ? ' open' : ''}`}
+                onClick={() => setIsOpen((open) => !open)}
+                aria-label={isOpen ? 'Zamknij menu' : 'Otwórz menu'}
+                aria-expanded={isOpen} aria-controls="main-navigation">
+                <span /><span /><span />
+            </button>
+            <div id="main-navigation" className={`nav-links${isOpen ? ' open' : ''}`}>
+                {LINKS.map(({ href, label }) => (
+                    <a key={href} href={href} onClick={closeForNavigation}
+                        className={activeSection === href ? 'active' : undefined}
+                        aria-current={activeSection === href ? 'location' : undefined}>
+                        {label}
+                    </a>
+                ))}
             </div>
-
             <div className="theme-toggle-wrapper">
-                <button
-                    id="theme-toggle-btn"
-                    type="button"
-                    role="switch"
-                    aria-checked={darkMode}
-                    aria-label="Przełącz tryb jasny/ciemny"
-                    onClick={toggleDarkMode}
-                    className={`theme-toggle ${darkMode ? "is-dark" : "light"}`}
-                >
-                    <span className="tt-track">
-                      <FaSun className="tt-icon sun" aria-hidden />
-                      <FaMoon className="tt-icon moon" aria-hidden />
-                      <span className="tt-thumb" />
+                <button type="button" role="switch" aria-checked={darkMode}
+                    aria-label="Tryb ciemny" onClick={toggleDarkMode}
+                    className={`theme-toggle${darkMode ? ' is-dark' : ''}`}>
+                    <span className="tt-track" aria-hidden="true">
+                        <FaSun className="tt-icon sun" />
+                        <FaMoon className="tt-icon moon" />
+                        <span className="tt-thumb" />
                     </span>
                 </button>
-                <span className="theme-label">
-                    Tryb: {darkMode ? "Ciemny" : "Jasny"}
-                  </span>
+                <span className="theme-label" aria-hidden="true">
+                    {darkMode ? 'Tryb ciemny' : 'Tryb jasny'}
+                </span>
             </div>
 
-            <button
-                className={`menu-toggle ${isOpen ? 'open' : ''}`}
-                onClick={() => setIsOpen(!isOpen)}
-                aria-label="Menu"
-                type="button"
-            >
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
         </nav>
     );
 }

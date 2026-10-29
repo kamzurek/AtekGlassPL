@@ -2,7 +2,20 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Ustawienie motywu przed pierwszym wyświetleniem strony. -->
+    <script>
+        (() => {
+            let theme = null;
+            try { theme = localStorage.getItem('atekglass-theme'); } catch {}
+            if (theme !== 'dark' && theme !== 'light') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? 'dark' : 'light';
+            }
+            document.documentElement.dataset.theme = theme;
+        })();
+    </script>
 
     <!-- Ikony -->
     <link rel="icon" href="/atekglass.ico" sizes="any">
@@ -63,14 +76,13 @@
         }
     </script>
 
-    <!-- Preload kluczowego obrazu (hero) dla lepszego LCP; podmień ścieżkę, jeśli inna -->
-    <link rel="preload" as="image" href="/heropic4.png" imagesrcset="/heropic4.png 1x" />
+    <!-- Ten sam obraz, który jest używany w tle hero. -->
+    <link rel="preload" as="image" href="/heropic6.jpg" fetchpriority="high" />
 
-    <!-- Czcionki i AOS (zostawiamy jak było) -->
+    <!-- Czcionki -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
 </head>
 <body>
 <div id="root"></div>
