@@ -95,6 +95,62 @@ export default function App() {
         };
     }, []);
 
+    useEffect(() => {
+        const main = document.getElementById('main-content');
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        // Domyślnie treść jest widoczna. Brak obsługi API nie ukryje strony.
+        if (!main || reducedMotion.matches || !('IntersectionObserver' in window)) return;
+
+        const selector = '.about-panel, .card, .gallery-item, .contact-item';
+        const registered = new Set();
+        const reveal = (element) => {
+            element.classList.add('is-revealed');
+            observer.unobserve(element);
+        };
+        const observer = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) reveal(entry.target);
+            }
+        }, { threshold: 0.08 });
+
+        const register = (element, index) => {
+            if (registered.has(element)) return;
+            registered.add(element);
+            // Elementy już widoczne oraz znajdujące się nad ekranem pozostają widoczne.
+            // Zapobiega to miganiu przy powrocie na stronę i linkach do sekcji.
+            if (reducedMotion.matches || element.getBoundingClientRect().top < window.innerHeight) return;
+            element.style.setProperty('--reveal-delay', `${(index % 3) * 65}ms`);
+            element.classList.add('reveal-pending');
+            observer.observe(element);
+        };
+        const registerTree = (node) => {
+            if (!(node instanceof Element)) return;
+            if (node.matches(selector)) register(node, 0);
+            node.querySelectorAll(selector).forEach(register);
+        };
+        main.querySelectorAll(selector).forEach(register);
+
+        // Obejmuje także cztery kafelki dodawane po rozwinięciu oferty.
+        const mutationObserver = new MutationObserver((mutations) => {
+            for (const mutation of mutations) mutation.addedNodes.forEach(registerTree);
+        });
+        mutationObserver.observe(main, { childList: true, subtree: true });
+
+        const onMotionChange = () => {
+            if (reducedMotion.matches) registered.forEach(reveal);
+        };
+        reducedMotion.addEventListener('change', onMotionChange);
+        return () => {
+            observer.disconnect();
+            mutationObserver.disconnect();
+            reducedMotion.removeEventListener('change', onMotionChange);
+            for (const element of registered) {
+                element.classList.remove('reveal-pending', 'is-revealed');
+                element.style.removeProperty('--reveal-delay');
+            }
+        };
+    }, []);
+
     return (
         <div className="App">
             <a className="skip-link" href="#main-content">Przejdź do treści</a>
